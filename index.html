@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苦手要素チェッカー</title>
+<style>
+:root{
+  --ink:#23262E; --sub:#5A6072; --bg:#F2F4F7; --card:#FFFFFF;
+  --line:#DDE1E8; --indigo:#33415F; --indigo-deep:#252F45;
+  --danger:#A62F2A; --danger-bg:#FBEFEE;
+  --warn:#8A5A00; --warn-bg:#FBF4E3;
+  --safe:#2E6B4F; --safe-bg:#EAF4EF;
+  --mute-bg:#EEF0F4;
+  --radius:14px;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;
+  font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%;}
+header{background:var(--indigo-deep);color:#F4F5F8;padding:26px 18px 20px;}
+.hwrap{max-width:720px;margin:0 auto;}
+h1{margin:0;font-size:22px;letter-spacing:.06em;}
+.tagline{margin:6px 0 0;font-size:13px;color:#C6CCDA;}
+.privacy{margin:10px 0 0;font-size:12px;color:#9AA3B8;border-top:1px solid #3B4763;padding-top:8px;}
+nav{background:var(--indigo);position:sticky;top:0;z-index:10;}
+.tabs{max-width:720px;margin:0 auto;display:flex;}
+.tab{flex:1;background:none;border:none;color:#BFC7D8;padding:13px 4px;font-size:14px;cursor:pointer;
+  border-bottom:3px solid transparent;font-family:inherit;}
+.tab.on{color:#fff;border-bottom-color:#fff;font-weight:700;}
+main{max-width:720px;margin:0 auto;padding:18px 14px 80px;}
+section.page{display:none;}
+section.page.on{display:block;}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin:14px 0;}
+h2{font-size:17px;margin:4px 0 10px;}
+h3{font-size:15px;margin:14px 0 6px;}
+.stepno{display:inline-block;background:var(--indigo);color:#fff;font-size:12px;border-radius:999px;
+  padding:2px 10px;margin-right:8px;vertical-align:2px;}
+p.note{font-size:13px;color:var(--sub);margin:6px 0;}
+details.cat{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:#FCFCFD;overflow:hidden;}
+details.cat summary{cursor:pointer;padding:11px 12px;font-weight:700;font-size:14px;list-style:none;
+  display:flex;align-items:center;gap:8px;}
+details.cat summary::-webkit-details-marker{display:none;}
+details.cat summary::before{content:"▸";color:var(--sub);transition:.15s;}
+details.cat[open] summary::before{transform:rotate(90deg);}
+.catbadge{margin-left:auto;font-size:11px;color:var(--sub);background:var(--mute-bg);border-radius:999px;padding:1px 8px;font-weight:400;}
+.catbadge.hit{background:var(--warn-bg);color:var(--warn);font-weight:700;}
+.catbody{padding:4px 12px 12px;border-top:1px solid var(--line);}
+.allok{font-size:12px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer;
+  color:var(--indigo);margin:8px 0 4px;font-family:inherit;}
+.itemrow{padding:9px 0;border-bottom:1px dashed var(--line);}
+.itemrow:last-child{border-bottom:none;}
+.itemlabel{font-size:14px;margin-bottom:6px;}
+.seg{display:flex;gap:6px;flex-wrap:wrap;}
+.seg button{flex:1;min-width:86px;border:1px solid var(--line);background:#fff;border-radius:8px;
+  padding:6px 4px;font-size:12.5px;cursor:pointer;color:var(--sub);font-family:inherit;}
+.seg button.sel0{background:var(--mute-bg);color:var(--ink);border-color:#C6CBD6;font-weight:700;}
+.seg button.sel1{background:var(--warn-bg);color:var(--warn);border-color:#E0C48A;font-weight:700;}
+.seg button.sel2{background:var(--danger-bg);color:var(--danger);border-color:#E3B1AE;font-weight:700;}
+.subopts{margin-top:8px;padding:10px;background:var(--mute-bg);border-radius:8px;font-size:13px;}
+.subopts label{display:inline-flex;align-items:center;gap:4px;margin:2px 10px 2px 0;}
+.subopts select,.subopts textarea,.subopts input[type=text]{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;padding:4px 6px;}
+.subopts textarea{width:100%;margin-top:4px;min-height:44px;}
+.sublabel{font-weight:700;display:block;margin:6px 0 2px;font-size:12.5px;color:var(--sub);}
+textarea.big, input.big{width:100%;font-family:inherit;font-size:14px;border:1px solid var(--line);border-radius:8px;padding:8px;}
+textarea.big{min-height:64px;}
+textarea.code{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;border:1px solid var(--line);
+  border-radius:8px;padding:8px;min-height:86px;word-break:break-all;}
+.btn{display:inline-block;background:var(--indigo);color:#fff;border:none;border-radius:9px;
+  padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin:6px 6px 0 0;}
+.btn.ghost{background:#fff;color:var(--indigo);border:1.5px solid var(--indigo);}
+.btn.small{padding:6px 12px;font-size:12.5px;font-weight:400;}
+.msg{font-size:13px;margin:6px 0;padding:8px 10px;border-radius:8px;display:none;}
+.msg.ok{display:block;background:var(--safe-bg);color:var(--safe);}
+.msg.err{display:block;background:var(--danger-bg);color:var(--danger);}
+/* 判定結果 */
+.pubbox{border-left:4px solid var(--indigo);padding-left:12px;margin:12px 0;}
+.verdict{border-radius:var(--radius);padding:14px;margin:12px 0;font-size:14px;}
+.verdict.safe{background:var(--safe-bg);color:var(--safe);border:1px solid #BFDCCB;}
+.verdict.warn{background:var(--warn-bg);color:var(--warn);border:1px solid #E5CE9C;}
+.verdict.danger{background:var(--danger-bg);color:var(--danger);border:1px solid #E5B7B4;}
+.verdict b{font-size:15px;}
+/* 開封カード */
+.sealed{border:2px dashed var(--indigo);border-radius:var(--radius);padding:18px;text-align:center;
+  background:repeating-linear-gradient(-45deg,#FAFBFD,#FAFBFD 12px,#F3F5FA 12px,#F3F5FA 24px);margin:12px 0;}
+.sealed .seal{font-size:26px;}
+.sealed p{font-size:13px;color:var(--sub);margin:8px 0 12px;}
+.hitgroup{margin:14px 0;}
+.hitgroup h4{margin:0 0 6px;font-size:14px;}
+.hitgroup.danger h4{color:var(--danger);}
+.hitgroup.warn h4{color:var(--warn);}
+.hitgroup.unset h4{color:var(--sub);}
+.hititem{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:#fff;font-size:13.5px;}
+.hititem .nm{font-weight:700;font-size:14px;}
+.chip{display:inline-block;font-size:11px;border-radius:999px;padding:1px 8px;margin:2px 4px 2px 0;background:var(--mute-bg);color:var(--sub);}
+.chip.sev1{background:var(--warn-bg);color:var(--warn);}
+.chip.sev2{background:var(--danger-bg);color:var(--danger);}
+.mention{font-size:12.5px;margin-top:6px;padding:6px 8px;border-radius:6px;}
+.mention.no{background:var(--danger-bg);color:var(--danger);}
+.mention.yes{background:var(--safe-bg);color:var(--safe);}
+.authorwarn{font-size:13px;margin-top:6px;padding:6px 8px;background:var(--mute-bg);border-radius:6px;}
+.secretitem{border-style:dashed;color:var(--sub);}
+hr.thin{border:none;border-top:1px solid var(--line);margin:14px 0;}
+footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:var(--sub);}
+@media(max-width:420px){ .seg button{min-width:30%;} }
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <h1>苦手要素チェッカー</h1>
+  <p class="tagline">シナリオの苦手要素を、ネタバレなしで事前チェック。TRPG（クトゥルフ神話TRPG・マーダーミステリー・ストーリープレイング等）向け。</p>
+  <p class="privacy">入力内容はすべてお使いの端末内でのみ処理され、外部に送信されません。</p>
+</div></header>
+<nav><div class="tabs">
+  <button class="tab on" data-page="player">遊ぶ人</button>
+  <button class="tab" data-page="author">作者</button>
+  <button class="tab" data-page="help">使い方</button>
+</div></nav>
+<main>
+
+<!-- ================= 遊ぶ人 ================= -->
+<section class="page on" id="page-player">
+  <div class="card">
+    <h2><span class="stepno">1</span>自分の苦手要素を設定する</h2>
+    <p class="note">分類ごとに開いて、各項目の強さを選んでください。初期値はすべて「気にしない」です。気になる分類だけ開けばOKです。</p>
+    <div id="playerCats"></div>
+    <h3>自分用メモ（判定には使われません）</h3>
+    <textarea class="big" id="pMemo" placeholder="リストにない自分の苦手要素などをメモできます。判定結果の画面に一緒に表示されます。"></textarea>
+    <div>
+      <button class="btn" id="pSave">この端末に保存する</button>
+      <button class="btn ghost" id="pExport">マイ設定コードを書き出す</button>
+      <button class="btn ghost" id="pImportOpen">マイ設定コードを読み込む</button>
+    </div>
+    <div class="msg" id="pSaveMsg"></div>
+    <div id="pExportBox" style="display:none">
+      <p class="note">このコードを控えておくと、別の端末やブラウザで同じ設定を読み込めます。</p>
+      <textarea class="code" id="pExportCode" readonly></textarea>
+      <button class="btn small ghost" id="pCopyExport">コードをコピー</button>
+    </div>
+    <div id="pImportBox" style="display:none">
+      <p class="note">書き出したマイ設定コードを貼り付けてください。現在の設定は上書きされます。</p>
+      <textarea class="code" id="pImportCode" placeholder="NGTP～ で始まるコード"></textarea>
+      <button class="btn small" id="pImportRun">読み込む</button>
+      <div class="msg" id="pImportMsg"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="stepno">2</span>作品コードで判定する</h2>
+    <p class="note">作者が配布している「作品コード」を貼り付けてください。あなたの設定と照合し、該当の有無だけを表示します。具体的な内容は、あなたが同意した場合にのみ開示されます。</p>
+    <textarea class="code" id="workCode" placeholder="NGTW～ で始まる作品コード"></textarea>
+    <button class="btn" id="judgeBtn">判定する</button>
+    <div class="msg" id="judgeMsg"></div>
+    <div id="judgeResult"></div>
+  </div>
+</section>
+
+<!-- ================= 作者 ================= -->
+<section class="page" id="page-author">
+  <div class="card">
+    <h2><span class="stepno">1</span>作品情報</h2>
+    <h3>作品タイトル（任意）</h3>
+    <input class="big" type="text" id="aTitle" placeholder="例: 深淵より愛をこめて">
+    <h3>全体コメント（任意・判定前から全員に公開されます）</h3>
+    <textarea class="big" id="aComment" placeholder="例: 本作に恋愛要素・性的要素はありません。ホラー演出は控えめです。"></textarea>
+  </div>
+
+  <div class="card">
+    <h2><span class="stepno">2</span>該当する苦手要素を登録</h2>
+    <p class="note">該当する項目に「示唆・軽度」または「明確にあり」を選ぶと、開示方法などの詳細設定が開きます。</p>
+    <div style="font-size:13px;color:var(--sub);background:var(--mute-bg);border-radius:8px;padding:8px 10px;margin-bottom:8px;">
+      開示方法の意味<br>
+      <b>公開</b>: 判定前から誰でも見えます（募集要項に書ける内容向け）<br>
+      <b>限定開示</b>: 該当した人が同意した場合のみ表示。口外の可否と注意文を設定できます<br>
+      <b>秘匿</b>: 要素名も表示されません。「開示できない要素に該当」とだけ伝わります
+    </div>
+    <div id="authorCats"></div>
+    <h3>その他の注意要素（任意・リストにない要素を自由記入）</h3>
+    <textarea class="big" id="aExtra" placeholder="ここに書いた内容は、判定後に本人が同意した場合の開示画面で必ず表示されます。"></textarea>
+  </div>
+
+  <div class="card">
+    <h2><span class="stepno">3</span>作品コードを発行</h2>
+    <button class="btn" id="aGenerate">作品コードを生成する</button>
+    <div class="msg" id="aGenMsg"></div>
+    <div id="aOutBox" style="display:none">
+      <h3>作品コード</h3>
+      <textarea class="code" id="aOutCode" readonly></textarea>
+      <button class="btn small ghost" id="aCopyCode">コードをコピー</button>
+      <h3>掲載用テンプレ（BOOTH・X向け）</h3>
+      <textarea class="code" id="aOutTpl" readonly></textarea>
+      <button class="btn small ghost" id="aCopyTpl">テンプレをコピー</button>
+    </div>
+    <hr class="thin">
+    <p class="note">発行済みの作品コードを読み込んで、内容を修正することもできます。</p>
+    <textarea class="code" id="aLoadCode" placeholder="NGTW～ で始まる作品コード"></textarea>
+    <button class="btn small ghost" id="aLoadRun">コードを読み込んで編集</button>
+    <div class="msg" id="aLoadMsg"></div>
+  </div>
+</section>
+
+<!-- ================= 使い方 ================= -->
+<section class="page" id="page-help">
+  <div class="card">
+    <h2>このページについて</h2>
+    <p>TRPG（クトゥルフ神話TRPG・マーダーミステリー・ストーリープレイング等）のシナリオに含まれる「苦手になりやすい要素」を、ネタバレを避けながら事前に確認するためのツールです。</p>
+    <h3>遊ぶ人の使い方</h3>
+    <p>1. 「遊ぶ人」タブで自分の苦手要素と強さを設定し、端末に保存します。<br>
+    2. 作者が配布している作品コードを貼り付けて判定します。<br>
+    3. まず「該当あり／なし」だけが表示されます。詳細の確認はネタバレを含む可能性があるため、同意した場合のみ開示されます。</p>
+    <h3>作者の使い方</h3>
+    <p>1. 「作者」タブで作品に含まれる要素を登録します。<br>
+    2. 要素ごとに開示方法（公開／限定開示／秘匿）と、注意文・口外の可否を設定できます。<br>
+    3. 発行された作品コードを、BOOTHの商品ページやXの告知などに掲載してください。</p>
+    <h3>強さの意味</h3>
+    <p>気にしない: 判定対象になりません。<br>
+    注意でOK: 該当すると注意として表示されます。<br>
+    絶対無理: 該当するとプレイ非推奨と表示されます。</p>
+    <h3>ご利用にあたって</h3>
+    <p>本ツールの判定は作者の自己申告に基づく参考情報であり、内容を保証するものではありません。要素の感じ方には個人差があります。最終的なプレイ可否のご判断はご自身でお願いします。<br>
+    「口外禁止」と表示された要素については、SNSや会話での言及をお控えください。<br>
+    本ツールは現状のまま提供されるものであり、利用により生じたいかなる損害・トラブルについても、制作者は責任を負いません。</p>
+  </div>
+</section>
+</main>
+<footer>苦手要素チェッカー / リストバージョン: <span id="listVer"></span>（<span id="listUpd"></span>更新）<br>判定は作者の自己申告に基づく参考情報です。利用により生じた損害・トラブルについて、制作者は責任を負いません。</footer>
+
+<script src="list.js"></script>
+<script>
+"use strict";
+/* ================= 共通 ================= */
+var LIST = window.NIGATE_LIST;
+var SEV_LABEL = {1:"示唆・軽度", 2:"明確にあり"};
+var TAG_LABEL = {1:"文章・口頭描写", 2:"画像・ビジュアル", 3:"NPCが行う", 4:"担当キャラクターが行う"};
+
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+function bytesToB64(bytes){
+  var bin = "";
+  for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function b64ToBytes(s){
+  s = s.replace(/-/g,"+").replace(/_/g,"/");
+  while (s.length % 4) s += "=";
+  var bin = atob(s), bytes = new Uint8Array(bin.length);
+  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  return bytes;
+}
+// 形式1: 素のJSONをbase64化 / 形式2: 圧縮してからbase64化（対応ブラウザで自動選択）
+async function packText(str){
+  var raw = new TextEncoder().encode(str);
+  if (typeof CompressionStream === "undefined") return { v: 1, b64: bytesToB64(raw) };
+  var stream = new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+  var buf = await new Response(stream).arrayBuffer();
+  return { v: 2, b64: bytesToB64(new Uint8Array(buf)) };
+}
+async function unpackText(v, b64){
+  var bytes = b64ToBytes(b64);
+  if (v === 1) return new TextDecoder().decode(bytes);
+  if (typeof DecompressionStream === "undefined") return null;
+  var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  var buf = await new Response(stream).arrayBuffer();
+  return new TextDecoder().decode(buf);
+}
+async function encodeCode(kind, obj){ // kind: "W"(作品) / "P"(マイ設定)
+  var p = await packText(JSON.stringify(obj));
+  return "NGT" + kind + p.v + "." + p.b64;
+}
+async function decodeCode(kind, text){
+  var t = String(text || "").replace(/\s+/g, "");
+  var m = t.match(/^NGT([WP])([12])\./);
+  if (!m || m[1] !== kind) return { ok: false, reason: "format" };
+  try {
+    var json = await unpackText(Number(m[2]), t.slice(m[0].length));
+    if (json === null) return { ok: false, reason: "unsupported" };
+    var obj = JSON.parse(json);
+    return { ok: true, obj: obj };
+  } catch(e){ return { ok: false, reason: "format" }; }
+}
+function decodeFailText(kind, reason){
+  if (reason === "unsupported") return "このコードは圧縮形式ですが、お使いのブラウザが対応していません。ブラウザを最新版に更新するか、別のブラウザでお試しください。";
+  return kind === "W"
+    ? "作品コードを読み取れませんでした。NGTWから始まる全文が貼られているか確認してください。"
+    : "コードを読み取れませんでした。NGTPから始まる全文が貼られているか確認してください。";
+}
+function itemById(id){
+  for (var c = 0; c < LIST.categories.length; c++){
+    var its = LIST.categories[c].items;
+    for (var i = 0; i < its.length; i++){
+      if (its[i].id === id) return { item: its[i], cat: LIST.categories[c] };
+    }
+  }
+  return null;
+}
+function showMsg(id, text, kind){
+  var el = $(id);
+  el.textContent = text;
+  el.className = "msg " + kind;
+}
+function copyText(srcId, btn){
+  var ta = $(srcId);
+  ta.focus(); ta.select();
+  var done = function(){ var t = btn.textContent; btn.textContent = "コピーしました"; setTimeout(function(){ btn.textContent = t; }, 1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(done, function(){ document.execCommand("copy"); done(); });
+  } else { document.execCommand("copy"); done(); }
+}
+
+/* ================= タブ ================= */
+var tabs = document.querySelectorAll(".tab");
+for (var ti = 0; ti < tabs.length; ti++){
+  tabs[ti].addEventListener("click", function(){
+    for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove("on");
+    this.classList.add("on");
+    var pages = document.querySelectorAll("section.page");
+    for (var k = 0; k < pages.length; k++) pages[k].classList.remove("on");
+    $("page-" + this.getAttribute("data-page")).classList.add("on");
+    window.scrollTo(0,0);
+  });
+}
+
+/* ================= 遊ぶ人: 設定UI ================= */
+var playerState = { lv: LIST.version, m: {}, memo: "" };
+var STORE_KEY = "ngt_player_v1";
+
+function activeItems(cat){
+  var out = [];
+  for (var i = 0; i < cat.items.length; i++) if (!cat.items[i].retired) out.push(cat.items[i]);
+  return out;
+}
+function renderPlayerCats(){
+  var html = "";
+  for (var c = 0; c < LIST.categories.length; c++){
+    var cat = LIST.categories[c], its = activeItems(cat);
+    if (!its.length) continue;
+    html += '<details class="cat" data-cat="' + esc(cat.id) + '"><summary>' + esc(cat.name)
+         + '<span class="catbadge" id="pbadge-' + esc(cat.id) + '"></span></summary><div class="catbody">'
+         + '<button type="button" class="allok" data-allok="' + esc(cat.id) + '">この分類はすべて「気にしない」にする</button>';
+    for (var i = 0; i < its.length; i++){
+      var it = its[i];
+      html += '<div class="itemrow"><div class="itemlabel">' + esc(it.label) + '</div>'
+           + '<div class="seg" data-pitem="' + esc(it.id) + '">'
+           + '<button type="button" data-v="0">気にしない</button>'
+           + '<button type="button" data-v="1">注意でOK</button>'
+           + '<button type="button" data-v="2">絶対無理</button>'
+           + '</div></div>';
+    }
+    html += '</div></details>';
+  }
+  $("playerCats").innerHTML = html;
+}
+function refreshPlayerUI(){
+  var segs = document.querySelectorAll("#playerCats .seg");
+  for (var s = 0; s < segs.length; s++){
+    var id = segs[s].getAttribute("data-pitem");
+    var v = playerState.m[id] || 0;
+    var btns = segs[s].querySelectorAll("button");
+    for (var b = 0; b < btns.length; b++){
+      btns[b].className = (Number(btns[b].getAttribute("data-v")) === v) ? ("sel" + v) : "";
+    }
+  }
+  for (var c = 0; c < LIST.categories.length; c++){
+    var cat = LIST.categories[c], its = activeItems(cat), n = 0;
+    for (var i = 0; i < its.length; i++) if (playerState.m[its[i].id] > 0) n++;
+    var badge = $("pbadge-" + cat.id);
+    if (badge){
+      badge.textContent = n ? (n + "件設定中") : "未設定";
+      badge.className = "catbadge" + (n ? " hit" : "");
+    }
+  }
+  $("pMemo").value = playerState.memo || "";
+}
+$("playerCats").addEventListener("click", function(ev){
+  var t = ev.target;
+  if (t.hasAttribute("data-allok")){
+    var cat = null;
+    for (var c = 0; c < LIST.categories.length; c++) if (LIST.categories[c].id === t.getAttribute("data-allok")) cat = LIST.categories[c];
+    if (cat){ var its = activeItems(cat); for (var i = 0; i < its.length; i++) delete playerState.m[its[i].id]; }
+    refreshPlayerUI(); return;
+  }
+  var seg = t.closest ? t.closest(".seg") : null;
+  if (seg && t.tagName === "BUTTON"){
+    var id = seg.getAttribute("data-pitem"), v = Number(t.getAttribute("data-v"));
+    if (v === 0) delete playerState.m[id]; else playerState.m[id] = v;
+    refreshPlayerUI();
+  }
+});
+$("pSave").addEventListener("click", function(){
+  playerState.memo = $("pMemo").value;
+  playerState.lv = LIST.version;
+  try {
+    localStorage.setItem(STORE_KEY, JSON.stringify(playerState));
+    showMsg("pSaveMsg", "保存しました。次回このページを開いたときも設定が引き継がれます。", "ok");
+  } catch(e){
+    showMsg("pSaveMsg", "この環境では端末への保存ができません。設定は今の画面内では有効です。マイ設定コードの書き出しをご利用ください。", "err");
+  }
+});
+$("pExport").addEventListener("click", async function(){
+  playerState.memo = $("pMemo").value;
+  playerState.lv = LIST.version;
+  $("pExportCode").value = await encodeCode("P", playerState);
+  $("pExportBox").style.display = "block";
+  $("pImportBox").style.display = "none";
+});
+$("pImportOpen").addEventListener("click", function(){
+  $("pImportBox").style.display = "block";
+  $("pExportBox").style.display = "none";
+});
+$("pImportRun").addEventListener("click", async function(){
+  var r = await decodeCode("P", $("pImportCode").value);
+  if (!r.ok || typeof r.obj.m !== "object" || r.obj.m === null){
+    showMsg("pImportMsg", decodeFailText("P", r.ok ? "format" : r.reason), "err");
+    return;
+  }
+  var obj = r.obj;
+  playerState = { lv: Number(obj.lv) || 1, m: {}, memo: String(obj.memo || "") };
+  for (var k in obj.m){ var v = Number(obj.m[k]); if (v === 1 || v === 2) playerState.m[k] = v; }
+  refreshPlayerUI();
+  showMsg("pImportMsg", "読み込みました。「この端末に保存する」を押すと保存されます。", "ok");
+});
+$("pCopyExport").addEventListener("click", function(){ copyText("pExportCode", this); });
+(function loadSaved(){
+  try {
+    var raw = localStorage.getItem(STORE_KEY);
+    if (raw){
+      var obj = JSON.parse(raw);
+      if (obj && obj.m){ playerState = { lv: Number(obj.lv) || 1, m: obj.m, memo: String(obj.memo || "") }; }
+    }
+  } catch(e){}
+})();
+
+/* ================= 遊ぶ人: 判定 ================= */
+var currentJudge = null;
+$("judgeBtn").addEventListener("click", async function(){
+  $("judgeMsg").className = "msg";
+  var r = await decodeCode("W", $("workCode").value);
+  if (!r.ok || typeof r.obj.it !== "object" || r.obj.it === null){
+    showMsg("judgeMsg", decodeFailText("W", r.reason), "err");
+    $("judgeResult").innerHTML = "";
+    return;
+  }
+  playerState.memo = $("pMemo").value;
+  currentJudge = buildJudge(r.obj);
+  renderJudgeStage1(currentJudge);
+});
+
+function buildJudge(work){
+  var res = { work: work, publics: [], hard: [], soft: [], unset: [], unknown: [], hasSecretMatch: false, hasSettings: false };
+  for (var k in playerState.m){ if (playerState.m[k] > 0){ res.hasSettings = true; break; } }
+  var savedLv = Number(playerState.lv) || 1;
+  for (var id in work.it){
+    var w = work.it[id];
+    var s = Number(w.s);
+    if (s !== 1 && s !== 2) continue;
+    var found = itemById(id);
+    var entry = {
+      id: id, sev: s,
+      d: (w.d === "B" || w.d === "C") ? w.d : "0",
+      tags: Array.isArray(w.tg) ? w.tg : [],
+      warn: String(w.w || ""),
+      mentionOk: Number(w.sp) === 1,
+      label: found ? found.item.label : null
+    };
+    if (!found){ res.unknown.push(entry); continue; }
+    if (entry.d === "0") res.publics.push(entry);
+    var ps;
+    if (Object.prototype.hasOwnProperty.call(playerState.m, id)) ps = playerState.m[id];
+    else if ((found.item.since || 1) > savedLv) ps = "unset";
+    else ps = 0;
+    if (ps === 2){ res.hard.push(entry); if (entry.d === "C") res.hasSecretMatch = true; }
+    else if (ps === 1){ res.soft.push(entry); if (entry.d === "C") res.hasSecretMatch = true; }
+    else if (ps === "unset"){ res.unset.push(entry); }
+  }
+  return res;
+}
+
+function chipTags(entry){
+  var h = "";
+  for (var i = 0; i < entry.tags.length; i++){
+    var lb = TAG_LABEL[Number(entry.tags[i])];
+    if (lb) h += '<span class="chip">' + esc(lb) + '</span>';
+  }
+  return h;
+}
+function renderPublicBlock(res){
+  var w = res.work, h = "";
+  h += '<div class="pubbox">';
+  if (w.t) h += '<div style="font-weight:700;font-size:15px;">' + esc(w.t) + '</div>';
+  h += '<div class="note" style="font-size:12px;color:var(--sub);">作品コード読み込み結果（公開情報）</div>';
+  if (w.gc) h += '<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap;">' + esc(w.gc) + '</div>';
+  if (res.publics.length){
+    h += '<div style="margin-top:8px;font-size:13px;font-weight:700;">公開されている要素</div>';
+    for (var i = 0; i < res.publics.length; i++){
+      var e = res.publics[i];
+      h += '<div style="font-size:13.5px;margin:2px 0;">・' + esc(e.label)
+        + ' <span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e) + '</div>';
+    }
+  }
+  h += '</div>';
+  return h;
+}
+function renderJudgeStage1(res){
+  var h = renderPublicBlock(res);
+  if (res.unknown.length){
+    h += '<div class="verdict warn">この作品コードには、このページがまだ対応していない要素が含まれています（' + res.unknown.length + '件）。ページが更新されるまで、その要素は判定できません。</div>';
+  }
+  if (!res.hasSettings){
+    h += '<div class="verdict warn"><b>あなたの苦手要素が未設定です。</b><br>上のステップ1で設定してから判定すると、この作品との照合結果が表示されます。現在は公開情報のみ表示しています。</div>';
+    $("judgeResult").innerHTML = h;
+    return;
+  }
+  var matched = res.hard.length + res.soft.length + res.unset.length > 0;
+  var hasExtra = !!(res.work.ex && String(res.work.ex).length);
+  if (!matched){
+    h += '<div class="verdict safe"><b>あなたの設定に該当する要素はありませんでした。</b></div>';
+    if (hasExtra){
+      h += sealedCard("作者からの追加の注意書きがあります。", "表示して確認できます。", "表示する");
+    }
+  } else {
+    h += '<div class="verdict warn"><b>あなたの設定に該当する要素があります。</b><br>件数や内容は、ネタバレ防止のためここでは表示されません。</div>';
+    h += sealedCard("どの要素に該当するか確認しますか？", "表示される内容には、作品のネタバレが含まれる可能性があります。ネタバレを避けたい場合は開封せず、プレイを見送るか、作者・GMに直接ご相談ください。");
+  }
+  $("judgeResult").innerHTML = h;
+  var btn = $("revealBtn");
+  if (btn) btn.addEventListener("click", function(){ renderJudgeStage2(currentJudge); });
+}
+function sealedCard(title, warnText, btnLabel){
+  return '<div class="sealed"><div class="seal">🔒</div>'
+    + '<div style="font-weight:700;">' + esc(title) + '</div>'
+    + '<p>' + esc(warnText) + '</p>'
+    + '<button class="btn" id="revealBtn">' + esc(btnLabel || "同意して開封する") + '</button></div>';
+}
+function renderHitItem(e){
+  if (e.d === "C"){
+    return '<div class="hititem secretitem"><span class="nm">開示できない要素</span>'
+      + '<div style="font-size:12.5px;">作者の設定により、この要素の内容は秘匿されています。</div></div>';
+  }
+  var h = '<div class="hititem"><span class="nm">' + esc(e.label) + '</span> '
+    + '<span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e);
+  if (e.warn) h += '<div class="authorwarn">作者からの注意: ' + esc(e.warn) + '</div>';
+  if (e.d === "B"){
+    h += e.mentionOk
+      ? '<div class="mention yes">この要素について: 感想等での言及は作者が許可しています。</div>'
+      : '<div class="mention no">この要素について: SNSや会話での言及は禁止されています。</div>';
+  }
+  h += '</div>';
+  return h;
+}
+function renderJudgeStage2(res){
+  var h = renderPublicBlock(res);
+  var verdict, cls;
+  if (res.hard.length || res.hasSecretMatch){
+    cls = "danger";
+    verdict = res.hasSecretMatch
+      ? "開示できない要素に該当するため、この作品のプレイは非推奨です。"
+      : "「絶対無理」に設定した要素に該当するため、この作品のプレイは非推奨です。";
+  } else if (res.soft.length || res.unset.length){
+    cls = "warn"; verdict = "注意が必要な要素に該当しています。以下を確認のうえ、プレイの可否をご判断ください。";
+  } else {
+    cls = "safe"; verdict = "あなたの設定に該当する要素はありませんでした。";
+  }
+  h += '<div class="verdict ' + cls + '"><b>' + esc(verdict) + '</b></div>';
+  if (res.hard.length){
+    h += '<div class="hitgroup danger"><h4>「絶対無理」に該当</h4>';
+    for (var i = 0; i < res.hard.length; i++) h += renderHitItem(res.hard[i]);
+    h += '</div>';
+  }
+  if (res.soft.length){
+    h += '<div class="hitgroup warn"><h4>「注意でOK」に該当</h4>';
+    for (var j = 0; j < res.soft.length; j++) h += renderHitItem(res.soft[j]);
+    h += '</div>';
+  }
+  if (res.unset.length){
+    h += '<div class="hitgroup unset"><h4>あなたが未設定の要素に該当（設定の更新をおすすめします）</h4>';
+    for (var k = 0; k < res.unset.length; k++) h += renderHitItem(res.unset[k]);
+    h += '</div>';
+  }
+  if (res.work.ex){
+    h += '<div class="hitgroup"><h4>その他の注意要素（作者記入）</h4>'
+      + '<div class="hititem" style="white-space:pre-wrap;">' + esc(res.work.ex) + '</div></div>';
+  }
+  if (playerState.memo){
+    h += '<div class="hitgroup"><h4>自分用メモ（あなたの入力）</h4>'
+      + '<div class="hititem" style="white-space:pre-wrap;">' + esc(playerState.memo) + '</div></div>';
+  }
+  h += '<p class="note">「口外禁止」の要素は、SNSや会話での言及をお控えください。この画面のスクリーンショットの公開も、内容によってはネタバレにあたります。</p>';
+  $("judgeResult").innerHTML = h;
+}
+
+/* ================= 作者 ================= */
+function renderAuthorCats(){
+  var html = "";
+  for (var c = 0; c < LIST.categories.length; c++){
+    var cat = LIST.categories[c], its = activeItems(cat);
+    if (!its.length) continue;
+    html += '<details class="cat"><summary>' + esc(cat.name)
+         + '<span class="catbadge" id="abadge-' + esc(cat.id) + '"></span></summary><div class="catbody">';
+    for (var i = 0; i < its.length; i++){
+      var it = its[i];
+      html += '<div class="itemrow" data-aitem="' + esc(it.id) + '" data-tags="' + (cat.tags ? "1" : "0") + '">'
+        + '<div class="itemlabel">' + esc(it.label) + '</div>'
+        + '<div class="seg" data-aseg="' + esc(it.id) + '">'
+        + '<button type="button" data-v="0">なし</button>'
+        + '<button type="button" data-v="1">示唆・軽度</button>'
+        + '<button type="button" data-v="2">明確にあり</button>'
+        + '</div>'
+        + '<div class="subopts" id="sub-' + esc(it.id) + '" style="display:none;">'
+        + '<span class="sublabel">開示方法</span>'
+        + '<select data-role="d">'
+        + '<option value="0">公開（判定前から見える）</option>'
+        + '<option value="B" selected>限定開示（該当者の同意後のみ）</option>'
+        + '<option value="C">秘匿（要素名も表示しない）</option>'
+        + '</select>'
+        + (cat.tags ?
+            '<span class="sublabel">形態（当てはまるものすべて・任意）</span>'
+          + '<label><input type="checkbox" data-role="tg" value="1">文章・口頭描写</label>'
+          + '<label><input type="checkbox" data-role="tg" value="2">画像・ビジュアル</label>'
+          + '<label><input type="checkbox" data-role="tg" value="3">NPCが行う</label>'
+          + '<label><input type="checkbox" data-role="tg" value="4">担当キャラクターが行う</label>'
+          : "")
+        + '<div data-role="bopts">'
+        + '<span class="sublabel">この要素への言及（感想・SNS等）</span>'
+        + '<label><input type="radio" name="sp-' + esc(it.id) + '" data-role="sp" value="0" checked>口外禁止</label>'
+        + '<label><input type="radio" name="sp-' + esc(it.id) + '" data-role="sp" value="1">言及してよい</label>'
+        + '<span class="sublabel">該当者に表示する注意文（任意）</span>'
+        + '<textarea data-role="w" placeholder="例: 第2章に該当する場面があります。回避はできません。"></textarea>'
+        + '</div>'
+        + '</div></div>';
+    }
+    html += '</div></details>';
+  }
+  $("authorCats").innerHTML = html;
+}
+function authorSev(id){
+  var seg = document.querySelector('[data-aseg="' + id + '"]');
+  if (!seg) return 0;
+  var sel = seg.querySelector("button[class^=sel]");
+  return sel ? Number(sel.getAttribute("data-v")) : 0;
+}
+function setAuthorSev(id, v){
+  var seg = document.querySelector('[data-aseg="' + id + '"]');
+  if (!seg) return;
+  var btns = seg.querySelectorAll("button");
+  for (var b = 0; b < btns.length; b++){
+    btns[b].className = (Number(btns[b].getAttribute("data-v")) === v && v > 0) ? ("sel" + v) : (Number(btns[b].getAttribute("data-v")) === v ? "sel0" : "");
+  }
+  var sub = $("sub-" + id);
+  if (sub) sub.style.display = v > 0 ? "block" : "none";
+}
+function refreshAuthorBadges(){
+  for (var c = 0; c < LIST.categories.length; c++){
+    var cat = LIST.categories[c], its = activeItems(cat), n = 0;
+    for (var i = 0; i < its.length; i++) if (authorSev(its[i].id) > 0) n++;
+    var badge = $("abadge-" + cat.id);
+    if (badge){
+      badge.textContent = n ? (n + "件該当") : "該当なし";
+      badge.className = "catbadge" + (n ? " hit" : "");
+    }
+  }
+}
+function refreshSubopt(id){
+  var sub = $("sub-" + id);
+  if (!sub) return;
+  var d = sub.querySelector('[data-role="d"]').value;
+  var bopts = sub.querySelector('[data-role="bopts"]');
+  bopts.style.display = (d === "B") ? "block" : "none";
+}
+$("authorCats").addEventListener("click", function(ev){
+  var t = ev.target;
+  var seg = t.closest ? t.closest("[data-aseg]") : null;
+  if (seg && t.tagName === "BUTTON"){
+    setAuthorSev(seg.getAttribute("data-aseg"), Number(t.getAttribute("data-v")));
+    refreshAuthorBadges();
+  }
+});
+$("authorCats").addEventListener("change", function(ev){
+  var row = ev.target.closest ? ev.target.closest("[data-aitem]") : null;
+  if (row && ev.target.getAttribute("data-role") === "d") refreshSubopt(row.getAttribute("data-aitem"));
+});
+$("aGenerate").addEventListener("click", async function(){
+  var work = { lv: LIST.version, it: {} };
+  var _t = $("aTitle").value.trim(); if (_t) work.t = _t;
+  var _gc = $("aComment").value.trim(); if (_gc) work.gc = _gc;
+  var _ex = $("aExtra").value.trim(); if (_ex) work.ex = _ex;
+  var rows = document.querySelectorAll("[data-aitem]");
+  for (var r = 0; r < rows.length; r++){
+    var id = rows[r].getAttribute("data-aitem");
+    var s = authorSev(id);
+    if (s < 1) continue;
+    var sub = $("sub-" + id);
+    var d = sub.querySelector('[data-role="d"]').value;
+    var entry = { s: s, d: d };
+    var tgs = sub.querySelectorAll('[data-role="tg"]:checked');
+    if (tgs.length){
+      entry.tg = [];
+      for (var g = 0; g < tgs.length; g++) entry.tg.push(Number(tgs[g].value));
+    }
+    if (d === "B"){
+      var sp = sub.querySelector('[data-role="sp"]:checked');
+      entry.sp = sp ? Number(sp.value) : 0;
+      var w = sub.querySelector('[data-role="w"]').value.trim();
+      if (w) entry.w = w;
+    }
+    work.it[id] = entry;
+  }
+  var code = await encodeCode("W", work);
+  $("aOutCode").value = code;
+  var url = (location.protocol === "file:") ? "（公開後のページURLをここに入れてください）" : location.origin + location.pathname;
+  $("aOutTpl").value = "【苦手要素チェック】\n本作の苦手要素を、ネタバレなしで事前に確認できます。\nチェックページ: " + url + "\n\n作品コード（ページに貼り付けてください）:\n" + code;
+  $("aOutBox").style.display = "block";
+  var n = Object.keys(work.it).length;
+  showMsg("aGenMsg", "作品コードを生成しました（登録要素: " + n + "件）。生成後に内容を変更した場合は、もう一度生成してください。", "ok");
+});
+$("aCopyCode").addEventListener("click", function(){ copyText("aOutCode", this); });
+$("aCopyTpl").addEventListener("click", function(){ copyText("aOutTpl", this); });
+$("aLoadRun").addEventListener("click", async function(){
+  var r = await decodeCode("W", $("aLoadCode").value);
+  if (!r.ok || typeof r.obj.it !== "object" || r.obj.it === null){
+    showMsg("aLoadMsg", decodeFailText("W", r.reason), "err");
+    return;
+  }
+  var work = r.obj;
+  $("aTitle").value = String(work.t || "");
+  $("aComment").value = String(work.gc || "");
+  $("aExtra").value = String(work.ex || "");
+  var rows = document.querySelectorAll("[data-aitem]");
+  var missing = 0;
+  for (var r = 0; r < rows.length; r++) setAuthorSev(rows[r].getAttribute("data-aitem"), 0);
+  for (var id in work.it){
+    var w = work.it[id], s = Number(w.s);
+    if (s !== 1 && s !== 2) continue;
+    var sub = $("sub-" + id);
+    if (!sub){ missing++; continue; }
+    setAuthorSev(id, s);
+    sub.querySelector('[data-role="d"]').value = (w.d === "0" || w.d === "C") ? w.d : "B";
+    var tgs = sub.querySelectorAll('[data-role="tg"]');
+    for (var g = 0; g < tgs.length; g++) tgs[g].checked = Array.isArray(w.tg) && w.tg.indexOf(Number(tgs[g].value)) >= 0;
+    var spv = (Number(w.sp) === 1) ? "1" : "0";
+    var sps = sub.querySelectorAll('[data-role="sp"]');
+    for (var p = 0; p < sps.length; p++) sps[p].checked = (sps[p].value === spv);
+    var wtxt = sub.querySelector('[data-role="w"]');
+    if (wtxt) wtxt.value = String(w.w || "");
+    refreshSubopt(id);
+  }
+  refreshAuthorBadges();
+  showMsg("aLoadMsg", missing
+    ? "読み込みました。ただし現在のリストに存在しない要素が" + missing + "件あり、反映できませんでした。"
+    : "読み込みました。内容を修正して、もう一度コードを生成してください。", missing ? "err" : "ok");
+});
+
+/* ================= 初期化 ================= */
+renderPlayerCats();
+refreshPlayerUI();
+renderAuthorCats();
+refreshAuthorBadges();
+$("listVer").textContent = "v" + LIST.version;
+$("listUpd").textContent = LIST.updated;
+</script>
+</body>
+</html>
