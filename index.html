@@ -95,10 +95,9 @@ textarea.report{width:100%;font-family:inherit;font-size:12.5px;border:1px solid
 .verdict.danger{background:var(--danger-bg);color:var(--danger);border:1px solid #E5B7B4;}
 .verdict.mute{background:var(--mute-bg);color:var(--sub);border:1px solid var(--line);}
 .verdict b{font-size:15px;}
-.sealed{border:2px dashed var(--indigo);border-radius:var(--radius);padding:18px;text-align:center;
-  background:repeating-linear-gradient(-45deg,#FAFBFD,#FAFBFD 12px,#F3F5FA 12px,#F3F5FA 24px);margin:12px 0;}
-.sealed .seal{font-size:26px;}
-.sealed p{font-size:13px;color:var(--sub);margin:8px 0 12px;}
+.linklike{background:none;border:none;color:var(--sub);text-decoration:underline;font-size:12.5px;cursor:pointer;font-family:inherit;padding:6px 0;margin-top:4px;}
+details.fold.primary{border:2px solid var(--indigo);background:#F7F9FD;}
+details.fold.primary summary{color:var(--indigo);}
 .hitgroup{margin:14px 0;}
 .hitgroup h4{margin:0 0 6px;font-size:14px;}
 .hitgroup.danger h4{color:var(--danger);}
@@ -136,39 +135,52 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
 <!-- ================= 遊ぶ人 ================= -->
 <section class="page on" id="page-player">
   <div class="card">
-    <h2><span class="stepno">1</span>自分の苦手要素を設定する</h2>
-    <p class="note">分類ごとに開いて、各項目の状態を選んでください。「未設定」のままの項目は、判定時に「未確認」として扱われます。「要確認」「絶対無理」を選ぶと、任意の補足メモ（例: 文章なら平気、画像は無理）を残せます。</p>
-    <button type="button" class="allbtn" id="pAllNone">未設定の項目をまとめて「気にしない」にする</button>
-    <div id="playerCats"></div>
-    <h3>自由記入（判定には使われません）</h3>
-    <textarea class="big" id="pMemo" placeholder="リストにない自分の苦手要素などを書けます。判定結果とGM・KP向け報告に一緒に表示されます。"></textarea>
+    <h2><span class="stepno">1</span>作品コードを読み込む</h2>
+    <p class="note">配布されている作品コードを貼り付けて読み込むと、公開されている作品情報が表示されます（判定用URLから開いた場合は自動で読み込まれます）。まずはその内容で、参加・購入するかの一次判断ができます。</p>
+    <textarea class="code" id="workCode" placeholder="NGTW～ で始まる作品コード"></textarea>
     <div>
-      <button class="btn" id="pSave">この端末に保存する</button>
-      <button class="btn ghost" id="pExport">マイ設定コードを書き出す</button>
-      <button class="btn ghost" id="pImportOpen">マイ設定コードを読み込む</button>
+      <button class="btn" id="loadWorkBtn">作品情報を読み込む</button>
+      <button class="btn ghost small" id="sampleBtn">お試し用サンプルを入れる</button>
     </div>
-    <div class="msg" id="pSaveMsg"></div>
-    <div id="pExportBox" class="hidden">
-      <p class="note">このコードを控えておくと、別の端末やブラウザで同じ設定を読み込めます。</p>
-      <textarea class="code" id="pExportCode" readonly></textarea>
-      <button class="btn small ghost" data-copy="pExportCode">コードをコピー</button>
-    </div>
-    <div id="pImportBox" class="hidden">
-      <p class="note">書き出したマイ設定コードを貼り付けてください。現在の設定は上書きされます。</p>
-      <textarea class="code" id="pImportCode" placeholder="NGTP～ で始まるコード"></textarea>
-      <button class="btn small" id="pImportRun">読み込む</button>
-      <div class="msg" id="pImportMsg"></div>
-    </div>
+    <div class="msg" id="loadMsg"></div>
+    <div id="workInfo"></div>
   </div>
 
   <div class="card">
-    <h2><span class="stepno">2</span>作品コードで判定する</h2>
-    <p class="note">作者が配布している「作品コード」を貼り付けてください（判定用URLから開いた場合は自動で入力されます）。まず該当の有無だけが表示され、具体的な内容はあなたが同意した場合にのみ開示されます。</p>
-    <textarea class="code" id="workCode" placeholder="NGTW～ で始まる作品コード"></textarea>
-    <div>
-      <button class="btn" id="judgeBtn">判定する</button>
-      <button class="btn ghost small" id="sampleBtn">お試し用サンプルを入れる</button>
-    </div>
+    <h2><span class="stepno">2</span>自分の苦手要素を設定する</h2>
+    <details class="fold" id="pFold">
+      <summary id="pFoldSum">苦手要素の設定</summary>
+      <div class="foldbody">
+        <p class="note">一度保存すれば、次回からはそのまま使えます。「未設定」のままの項目は、判定時に「未確認」として扱われます。「要確認」「絶対無理」を選ぶと、任意の補足メモ（例: 文章なら平気、画像は無理）を残せます。</p>
+        <button type="button" class="allbtn" id="pAllNone">未設定の項目をまとめて「気にしない」にする</button>
+        <div id="playerCats"></div>
+        <h3>自由記入（判定には使われません）</h3>
+        <textarea class="big" id="pMemo" placeholder="リストにない自分の苦手要素などを書けます。GM・KP向け報告に一緒に表示されます。"></textarea>
+        <div>
+          <button class="btn" id="pSave">この端末に保存する</button>
+          <button class="btn ghost" id="pExport">マイ設定コードを書き出す</button>
+          <button class="btn ghost" id="pImportOpen">マイ設定コードを読み込む</button>
+        </div>
+        <div class="msg" id="pSaveMsg"></div>
+        <div id="pExportBox" class="hidden">
+          <p class="note">このコードを控えておくと、別の端末やブラウザで同じ設定を読み込めます。</p>
+          <textarea class="code" id="pExportCode" readonly></textarea>
+          <button class="btn small ghost" data-copy="pExportCode">コードをコピー</button>
+        </div>
+        <div id="pImportBox" class="hidden">
+          <p class="note">書き出したマイ設定コードを貼り付けてください。現在の設定は上書きされます。</p>
+          <textarea class="code" id="pImportCode" placeholder="NGTP～ で始まるコード"></textarea>
+          <button class="btn small" id="pImportRun">読み込む</button>
+          <div class="msg" id="pImportMsg"></div>
+        </div>
+      </div>
+    </details>
+  </div>
+
+  <div class="card">
+    <h2><span class="stepno">3</span>判定する</h2>
+    <p class="note">読み込んだ作品とあなたの設定を照合します。結果はまず「該当あり／なし」だけが表示されます。該当があった場合は、報告テキストをGM・KPに送って相談するのが基本の流れです。</p>
+    <button class="btn" id="judgeBtn">判定する</button>
     <div class="msg" id="judgeMsg"></div>
     <div id="judgeResult"></div>
   </div>
@@ -232,7 +244,7 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
       <textarea class="code" id="aOutCode" readonly></textarea>
       <button class="btn small ghost" data-copy="aOutCode">コードをコピー</button>
       <div id="aUrlWrap">
-        <h3>判定用URL（開くと自動で判定されます）</h3>
+        <h3>判定用URL（開くと作品情報が自動で表示されます）</h3>
         <textarea class="code" id="aOutUrl" readonly></textarea>
         <button class="btn small ghost" data-copy="aOutUrl">URLをコピー</button>
       </div>
@@ -250,10 +262,10 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
     <p>TRPG（クトゥルフ神話TRPG・マーダーミステリー・ストーリープレイング等）のシナリオに含まれる「苦手になりやすい要素」を、ネタバレを避けながら事前に確認するためのツールです。判定は作者やGM・KPが登録した内容（自己申告）に基づきます。</p>
 
     <h3>遊ぶ人の使い方</h3>
-    <p>1. 「遊ぶ人」タブで自分の苦手要素を設定し、端末に保存します。<br>
-    2. 配布されている作品コードを貼り付けるか、判定用URLを開いて判定します。<br>
-    3. まず「該当あり／なし」だけが表示されます。詳細の確認はネタバレを含む可能性があるため、同意した場合のみ開示されます。<br>
-    4. 判定画面の「報告用テキスト」ボタンで、GM・KPに送る用のテキストを出力できます。開封前でも「該当ありでした」とだけ報告でき、開封後は詳細と補足メモ付きで報告できます。</p>
+    <p>1. 配布されている作品コードを貼り付けるか、判定用URLを開くと、公開されている作品情報が表示されます。まずここで参加・購入の一次判断ができます。<br>
+    2. 自分の苦手要素を設定します。一度保存すれば、次回からはそのまま使えます。<br>
+    3. 判定すると、まず「該当あり／なし」だけが表示されます。該当があった場合は、報告テキストをGM・KPに送って相談するのが基本の流れです。ネタバレを踏まずに判断を任せられます。<br>
+    4. GMレス作品などで相談する相手がいない場合は、「自分で詳細を確認する」から、ネタバレを含む詳細を自分で見ることもできます。</p>
 
     <h3>状態の意味（遊ぶ人）</h3>
     <p>未設定: まだ確認していない項目。判定では「未確認」として別枠で表示されます。<br>
@@ -556,6 +568,7 @@ $("pSave").addEventListener("click", () => {
   try {
     localStorage.setItem(STORE_KEY, JSON.stringify(playerState));
     showMsg("pSaveMsg", "保存しました。" + tail, "ok");
+    updatePFold();
   } catch(e){
     showMsg("pSaveMsg", "この環境では端末への保存ができません。設定は今の画面内では有効です。マイ設定コードの書き出しをご利用ください。", "err");
   }
@@ -586,6 +599,7 @@ $("pImportRun").addEventListener("click", async () => {
     for (const k in obj.notes){ if (obj.notes[k]) playerState.notes[k] = String(obj.notes[k]); }
   }
   refreshPlayerUI();
+  updatePFold();
   showMsg("pImportMsg", "読み込みました。「この端末に保存する」を押すと保存されます。", "ok");
 });
 (function loadSaved(){
@@ -601,24 +615,97 @@ $("pImportRun").addEventListener("click", async () => {
 })();
 
 /* ================= 遊ぶ人: 判定 ================= */
+let currentWork = null;
 let currentJudge = null;
+
+function updatePFold(initial){
+  let n = 0;
+  for (const k in playerState.m) n++;
+  $("pFoldSum").textContent = n > 0
+    ? "苦手要素の設定（" + n + "項目設定済み）— 変更する場合はここを開く"
+    : "苦手要素の設定（未設定）— ここを開いて設定する";
+  if (initial) $("pFold").open = (n === 0);
+}
+
+$("loadWorkBtn").addEventListener("click", () => loadWork($("workCode").value));
 $("sampleBtn").addEventListener("click", async () => {
-  $("workCode").value = await encodeCode("W", SAMPLE_WORK);
-  showMsg("judgeMsg", "サンプルを入力しました。設定内容: 公開2件（担当キャラクターの死亡の可能性＝明確にあり／びっくり演出＝示唆・軽度）、限定開示1件（救いのない結末＝明確にあり・口外禁止・注意文つき）、秘匿1件（裏切り・裏切る役割の存在。判定画面では名前が出ません）。「救いのない結末」や「裏切り」を要確認以上に設定してから判定すると、開封の流れを確認できます。", "ok");
+  const code = await encodeCode("W", SAMPLE_WORK);
+  $("workCode").value = code;
+  await loadWork(code);
+  showMsg("loadMsg", "サンプルを読み込みました。設定内容: 公開2件（担当キャラクターの死亡の可能性＝明確にあり／びっくり演出＝示唆・軽度）、限定開示1件（救いのない結末＝明確にあり・口外禁止・注意文つき）、秘匿1件（裏切り・裏切る役割の存在。判定画面では名前が出ません）。「救いのない結末」や「裏切り」を要確認以上に設定してから判定すると、詳細確認の流れを試せます。", "ok");
 });
-$("judgeBtn").addEventListener("click", () => runJudge($("workCode").value));
-async function runJudge(codeText){
-  clearMsg("judgeMsg");
+async function loadWork(codeText){
+  clearMsg("loadMsg"); clearMsg("judgeMsg");
+  $("judgeResult").innerHTML = "";
+  currentJudge = null;
   const r = await decodeCode("W", codeText);
   if (!r.ok || typeof r.obj.it !== "object" || r.obj.it === null){
-    showMsg("judgeMsg", decodeFailText("W", r.reason), "err");
-    $("judgeResult").innerHTML = "";
+    currentWork = null;
+    $("workInfo").innerHTML = "";
+    showMsg("loadMsg", decodeFailText("W", r.reason), "err");
+    return;
+  }
+  currentWork = r.obj;
+  $("workInfo").innerHTML = renderWorkInfo(currentWork);
+  showMsg("loadMsg", "作品情報を読み込みました。内容を確認し、問題なければステップ3で判定してください。", "ok");
+}
+function workPublics(work){
+  const pubs = [], unknown = [];
+  for (const id in work.it){
+    const w = work.it[id];
+    const s = Number(w.s);
+    if (s !== 1 && s !== 2) continue;
+    const found = itemById(id);
+    if (!found){ unknown.push(id); continue; }
+    if (w.d !== "B" && w.d !== "C"){
+      pubs.push({ label: found.item.label, sev: s, tags: Array.isArray(w.tg) ? w.tg : [] });
+    }
+  }
+  return { pubs: pubs, unknown: unknown };
+}
+function renderWorkInfo(work){
+  const info = workPublics(work);
+  let h = "";
+  if (work.by && Number(work.by.k) === 2){
+    h += '<div class="thirdparty">この作品コードは作者以外（KP・GM等）が作成したものです。作者公式の内容とは異なる場合があります。</div>';
+  }
+  h += '<div class="pubbox">';
+  if (work.t) h += '<div style="font-weight:700;font-size:15px;">' + esc(work.t) + '</div>';
+  h += '<div class="byline">発行者: ' + esc(issuerLabel(work)) + '</div>';
+  if (work.by && work.by.u) h += '<div class="byline">参照URL: ' + esc(work.by.u) + '</div>';
+  const wlv = Number(work.lv) || 1;
+  if (wlv < LIST.version){
+    h += '<div class="byline">この作品コードはリストv' + wlv + '時点で作成されています。それ以降に追加された要素については未確認です。</div>';
+  }
+  if (work.gc) h += '<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap;">' + esc(work.gc) + '</div>';
+  if (info.pubs.length){
+    h += '<div style="margin-top:8px;font-size:13px;font-weight:700;">公開されている要素</div>';
+    for (const e of info.pubs){
+      h += '<div style="font-size:13.5px;margin:2px 0;">・' + esc(e.label)
+        + ' <span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e) + '</div>';
+    }
+  }
+  h += '</div>';
+  if (info.unknown.length){
+    h += '<div class="verdict warn">この作品コードには、このページがまだ対応していない要素が含まれています（' + info.unknown.length + '件）。ページが更新されるまで、その要素は判定できません。</div>';
+  }
+  return h;
+}
+$("judgeBtn").addEventListener("click", () => {
+  clearMsg("judgeMsg");
+  if (!currentWork){
+    showMsg("judgeMsg", "先にステップ1で作品コードを読み込んでください。", "err");
     return;
   }
   collectPlayerInputs();
-  currentJudge = buildJudge(r.obj);
+  currentJudge = buildJudge(currentWork);
+  if (!currentJudge.hasSettings){
+    showMsg("judgeMsg", "苦手要素が未設定です。ステップ2で設定してから判定してください。", "err");
+    $("judgeResult").innerHTML = "";
+    return;
+  }
   renderJudgeStage1(currentJudge);
-}
+});
 function buildJudge(work){
   const res = { work: work, publics: [], hard: [], soft: [], unset: [], unknown: [],
     secretHitCount: 0, hasSecretMatch: false, hasSettings: false, revealed: false };
@@ -626,7 +713,7 @@ function buildJudge(work){
   for (const id in work.it){
     const w = work.it[id];
     const s = Number(w.s);
-    if (s !== 1 && s !== 2) continue; // s:0(なし宣言記録)・不正値は判定対象外
+    if (s !== 1 && s !== 2) continue; // s:0(なし記録)・不正値は判定対象外
     const found = itemById(id);
     const entry = {
       id: id, sev: s,
@@ -660,76 +747,37 @@ function issuerLabel(work){
   const kind = Number(by.k) === 2 ? "第三者（KP・GM等）" : (Number(by.k) === 1 ? "作者本人" : "不明");
   return kind + (by.n ? "：" + by.n : "");
 }
-function thirdPartyBanner(res){
-  const w = res.work;
-  if (w.by && Number(w.by.k) === 2){
-    return '<div class="thirdparty">この作品コードは作者以外（KP・GM等）が作成したものです。作者公式の内容とは異なる場合があります。</div>';
-  }
-  return "";
-}
-function renderWorkInfoFold(res){
-  const w = res.work;
-  let inner = '<div class="pubbox">';
-  if (w.t) inner += '<div style="font-weight:700;font-size:15px;">' + esc(w.t) + '</div>';
-  inner += '<div class="byline">発行者: ' + esc(issuerLabel(w)) + '</div>';
-  if (w.by && w.by.u) inner += '<div class="byline">参照URL: ' + esc(w.by.u) + '</div>';
-  const wlv = Number(w.lv) || 1;
-  if (wlv < LIST.version){
-    inner += '<div class="byline">この作品コードはリストv' + wlv + '時点で作成されています。それ以降に追加された要素については未確認です。</div>';
-  }
-  if (w.gc) inner += '<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap;">' + esc(w.gc) + '</div>';
-  if (res.publics.length){
-    inner += '<div style="margin-top:8px;font-size:13px;font-weight:700;">公開されている要素</div>';
-    for (const e of res.publics){
-      inner += '<div style="font-size:13.5px;margin:2px 0;">・' + esc(e.label)
-        + ' <span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e) + '</div>';
-    }
-  }
-  inner += '</div>';
-  return '<details class="fold"><summary>作品情報・公開されている要素を表示</summary><div class="foldbody">' + inner + '</div></details>';
-}
-function sealedCard(title, warnText, btnLabel){
-  return '<div class="sealed"><div class="seal">🔒</div>'
-    + '<div style="font-weight:700;">' + esc(title) + '</div>'
-    + '<p>' + esc(warnText) + '</p>'
-    + '<button class="btn" id="revealBtn">' + esc(btnLabel || "同意して開封する") + '</button></div>';
-}
-function reportBox(text, label){
-  return '<details class="fold"><summary>' + esc(label) + '</summary><div class="foldbody">'
+function reportBox(text, label, open, primary){
+  return '<details class="fold' + (primary ? ' primary' : '') + '"' + (open ? ' open' : '') + '>'
+    + '<summary>' + esc(label) + '</summary><div class="foldbody">'
     + '<textarea class="report" id="reportText" readonly>' + esc(text) + '</textarea>'
     + '<button class="btn small ghost" data-copy="reportText">報告テキストをコピー</button>'
     + '</div></details>';
 }
+function detailLink(){
+  return '<div><button type="button" class="linklike" id="revealBtn">自分で詳細を確認する（作品のネタバレを含みます）</button></div>';
+}
 function renderJudgeStage1(res){
-  let h = thirdPartyBanner(res);
-  if (res.unknown.length){
-    h += '<div class="verdict warn">この作品コードには、このページがまだ対応していない要素が含まれています（' + res.unknown.length + '件）。ページが更新されるまで、その要素は判定できません。</div>';
-  }
-  if (!res.hasSettings){
-    h += '<div class="verdict warn"><b>あなたの苦手要素が未設定です。</b><br>上のステップ1で設定してから判定すると、この作品との照合結果が表示されます。</div>';
-    h += renderWorkInfoFold(res);
-    $("judgeResult").innerHTML = h;
-    return;
-  }
+  let h = "";
   const matched = res.hard.length + res.soft.length > 0;
   const hasUnset = res.unset.length > 0;
   const hasExtra = !!(res.work.ex && String(res.work.ex).length);
   if (!matched){
     h += '<div class="verdict safe"><b>あなたの設定に該当する要素はありませんでした。</b></div>';
-    h += reportBox(makeReport(res, false), "GM・KP向け報告テキスト（開封前）");
     if (hasUnset){
-      h += '<div class="verdict mute">ただし、あなたが未設定（未確認）の要素がこの作品に含まれています。詳細は開封すると確認できます。</div>';
-      h += sealedCard("未確認の要素を確認できます。", "表示される内容には、作品のネタバレが含まれる可能性があります。");
-    } else if (hasExtra){
+      h += '<div class="verdict mute">ただし、あなたが未設定（未確認）の要素がこの作品に含まれています。GM・KPに報告して確認してもらうか、下の詳細確認で内容を見られます。</div>';
+    }
+    h += reportBox(makeReport(res, false), "GM・KP向け報告テキスト", false, false);
+    if (!hasUnset && hasExtra){
       h += '<div class="hitgroup"><h4>その他の注意要素（登録者記入）</h4>'
         + '<div class="hititem" style="white-space:pre-wrap;">' + esc(res.work.ex) + '</div></div>';
     }
+    if (hasUnset) h += detailLink();
   } else {
-    h += '<div class="verdict warn"><b>あなたの設定に該当する要素があります。</b><br>件数や内容は、ネタバレ防止のためここでは表示されません。</div>';
-    h += reportBox(makeReport(res, false), "GM・KP向け報告テキスト（開封前）");
-    h += sealedCard("どの要素に該当するか確認しますか？", "表示される内容には、作品のネタバレが含まれる可能性があります。ネタバレを避けたい場合は開封せず、上の報告テキストでGM・KPにご相談ください。");
+    h += '<div class="verdict warn"><b>あなたの設定に該当する要素があります。</b><br>件数や内容は、ネタバレ防止のためここでは表示されません。下の報告テキストをGM・KPに送って、プレイできるか相談するのが基本の流れです。</div>';
+    h += reportBox(makeReport(res, false), "GM・KPに報告して相談する（ネタバレなし）", true, true);
+    h += detailLink();
   }
-  h += renderWorkInfoFold(res);
   $("judgeResult").innerHTML = h;
   const btn = $("revealBtn");
   if (btn) btn.addEventListener("click", () => renderJudgeStage2(currentJudge));
@@ -737,7 +785,7 @@ function renderJudgeStage1(res){
 function renderHitItem(e){
   if (e.d === "C"){
     return '<div class="hititem secretitem"><span class="nm">開示できない要素</span>'
-      + '<div style="font-size:12.5px;">作者の設定により、この要素の内容は秘匿されています。</div></div>';
+      + '<div style="font-size:12.5px;">登録者の設定により、この要素の内容は秘匿されています。</div></div>';
   }
   let h = '<div class="hititem"><span class="nm">' + esc(e.label) + '</span> '
     + '<span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e);
@@ -754,7 +802,7 @@ function renderHitItem(e){
 }
 function renderJudgeStage2(res){
   res.revealed = true;
-  let h = thirdPartyBanner(res);
+  let h = "";
   let cls, verdict;
   if (res.hard.length || res.hasSecretMatch){
     cls = "danger";
@@ -769,7 +817,7 @@ function renderJudgeStage2(res){
     cls = "safe"; verdict = "あなたの設定に該当する要素はありませんでした。";
   }
   h += '<div class="verdict ' + cls + '"><b>' + esc(verdict) + '</b></div>';
-  h += reportBox(makeReport(res, true), "GM・KP向け報告テキスト（開封後・詳細つき）");
+  h += reportBox(makeReport(res, true), "GM・KP向け報告テキスト（詳細つき）", false, false);
   if (res.hard.length){
     h += '<div class="hitgroup danger"><h4>「絶対無理」に該当</h4>';
     for (const e of res.hard) h += renderHitItem(e);
@@ -789,12 +837,7 @@ function renderJudgeStage2(res){
     h += '<div class="hitgroup"><h4>その他の注意要素（登録者記入）</h4>'
       + '<div class="hititem" style="white-space:pre-wrap;">' + esc(res.work.ex) + '</div></div>';
   }
-  if (playerState.memo){
-    h += '<div class="hitgroup"><h4>自由記入（あなたの入力）</h4>'
-      + '<div class="hititem" style="white-space:pre-wrap;">' + esc(playerState.memo) + '</div></div>';
-  }
   h += '<p class="note">「口外禁止」の要素は、SNSや会話での言及をお控えください。この画面のスクリーンショットの公開も、内容によってはネタバレにあたります。</p>';
-  h += renderWorkInfoFold(res);
   $("judgeResult").innerHTML = h;
 }
 
@@ -810,7 +853,7 @@ function makeReport(res, revealed){
   L.push("【苦手要素チェック報告】" + (res.work.t || "（作品名未設定）"));
   if (!revealed){
     const matched = res.hard.length + res.soft.length > 0;
-    L.push("判定: " + (matched ? "該当あり（詳細は未開封です。判断をお願いします）" : "設定済みの要素への該当なし"));
+    L.push("判定: " + (matched ? "該当あり（詳細は未確認です。判断をお願いします）" : "設定済みの要素への該当なし"));
     L.push("未確認（未設定）の要素: " + (res.unset.length ? "あり" : "なし"));
   } else {
     let verdict;
@@ -989,7 +1032,7 @@ $("aGenerate").addEventListener("click", async () => {
   }
   const urlText = isFile ? "（公開後のページURLをここに入れてください）" : pageUrl;
   $("aOutTpl").value = "【苦手要素チェック】\n本作の苦手要素を、ネタバレなしで事前に確認できます。\nチェックページ: " + urlText
-    + (isFile ? "" : "\n判定用URL（開くと自動で判定されます）:\n" + pageUrl + "#c=" + code)
+    + (isFile ? "" : "\n判定用URL（開くと作品情報が表示されます）:\n" + pageUrl + "#c=" + code)
     + "\n\n作品コード（ページに貼り付ける場合はこちら）:\n" + code;
   $("aOutBox").classList.remove("hidden");
   let n = 0;
@@ -1054,6 +1097,7 @@ $("aLoadRun").addEventListener("click", async () => {
 /* ================= 初期化 ================= */
 renderPlayerCats();
 refreshPlayerUI();
+updatePFold(true);
 renderAuthorCats();
 refreshAuthorBadges();
 $("toolVer").textContent = TOOL_VERSION;
@@ -1065,7 +1109,7 @@ $("listUpd").textContent = LIST.updated;
   const code = decodeURIComponent(m[1]);
   $("workCode").value = code;
   switchTab("player");
-  runJudge(code);
+  loadWork(code);
 })();
 </script>
 </body>
