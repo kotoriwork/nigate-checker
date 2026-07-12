@@ -191,7 +191,7 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
     <h2><span class="stepno">1</span>作品情報と発行者</h2>
     <h3>作品タイトル（任意）</h3>
     <input class="big" type="text" id="aTitle" placeholder="例: 深淵より愛をこめて">
-    <h3>全体コメント（任意・判定前から全員に公開されます）</h3>
+    <h3>全体コメント（任意・判定画面の「作品情報」から誰でも見られます）</h3>
     <textarea class="big" id="aComment" placeholder="例: 本作に恋愛要素はありません。ホラー演出は控えめです。"></textarea>
     <h3>発行者区分（必須）</h3>
     <div class="radios">
@@ -203,7 +203,7 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
     <input class="big" type="text" id="aByName" placeholder="例: 卓のGMの〇〇">
     <h3>参照URL（任意）</h3>
     <input class="big" type="text" id="aByUrl" placeholder="例: BOOTHの商品ページや作者の告知ページのURL">
-    <p class="note">判定画面にそのまま文字として表示されます。作者本人が商品ページ等を載せておくと、遊ぶ人が本物かどうかを確かめる手がかりになります。</p>
+    <p class="note">判定画面の「作品情報」にそのまま文字として表示されます。</p>
   </div>
 
   <div class="card">
@@ -217,7 +217,7 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
     </div>
     <div id="authorCats"></div>
     <h3>その他の注意要素（任意・リストにない要素を自由記入）</h3>
-    <textarea class="big" id="aExtra" placeholder="ここに書いた内容は、判定後に本人が同意した場合の開示画面で必ず表示されます。"></textarea>
+    <textarea class="big" id="aExtra" placeholder="リストにない注意点を書けます。該当がなかった人にも判定結果と一緒に表示されるため、ネタバレになる内容は各要素の注意文側に書いてください。"></textarea>
   </div>
 
   <div class="card">
@@ -604,7 +604,7 @@ $("pImportRun").addEventListener("click", async () => {
 let currentJudge = null;
 $("sampleBtn").addEventListener("click", async () => {
   $("workCode").value = await encodeCode("W", SAMPLE_WORK);
-  clearMsg("judgeMsg");
+  showMsg("judgeMsg", "サンプルを入力しました。設定内容: 公開2件（担当キャラクターの死亡の可能性＝明確にあり／びっくり演出＝示唆・軽度）、限定開示1件（救いのない結末＝明確にあり・口外禁止・注意文つき）、秘匿1件（裏切り・裏切る役割の存在。判定画面では名前が出ません）。「救いのない結末」や「裏切り」を要確認以上に設定してから判定すると、開封の流れを確認できます。", "ok");
 });
 $("judgeBtn").addEventListener("click", () => runJudge($("workCode").value));
 async function runJudge(codeText){
@@ -660,29 +660,33 @@ function issuerLabel(work){
   const kind = Number(by.k) === 2 ? "第三者（KP・GM等）" : (Number(by.k) === 1 ? "作者本人" : "不明");
   return kind + (by.n ? "：" + by.n : "");
 }
-function renderPublicBlock(res){
+function thirdPartyBanner(res){
   const w = res.work;
-  let h = '<div class="pubbox">';
-  if (w.t) h += '<div style="font-weight:700;font-size:15px;">' + esc(w.t) + '</div>';
-  h += '<div class="byline">発行者: ' + esc(issuerLabel(w)) + '</div>';
-  if (w.by && w.by.u) h += '<div class="byline">参照URL: ' + esc(w.by.u) + '</div>';
   if (w.by && Number(w.by.k) === 2){
-    h += '<div class="thirdparty">この作品コードは作者以外（KP・GM等）が作成したものです。作者公式の内容とは異なる場合があります。</div>';
+    return '<div class="thirdparty">この作品コードは作者以外（KP・GM等）が作成したものです。作者公式の内容とは異なる場合があります。</div>';
   }
+  return "";
+}
+function renderWorkInfoFold(res){
+  const w = res.work;
+  let inner = '<div class="pubbox">';
+  if (w.t) inner += '<div style="font-weight:700;font-size:15px;">' + esc(w.t) + '</div>';
+  inner += '<div class="byline">発行者: ' + esc(issuerLabel(w)) + '</div>';
+  if (w.by && w.by.u) inner += '<div class="byline">参照URL: ' + esc(w.by.u) + '</div>';
   const wlv = Number(w.lv) || 1;
   if (wlv < LIST.version){
-    h += '<div class="byline">この作品コードはリストv' + wlv + '時点で作成されています。それ以降に追加された要素については未確認です。</div>';
+    inner += '<div class="byline">この作品コードはリストv' + wlv + '時点で作成されています。それ以降に追加された要素については未確認です。</div>';
   }
-  if (w.gc) h += '<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap;">' + esc(w.gc) + '</div>';
+  if (w.gc) inner += '<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap;">' + esc(w.gc) + '</div>';
   if (res.publics.length){
-    h += '<div style="margin-top:8px;font-size:13px;font-weight:700;">公開されている要素</div>';
+    inner += '<div style="margin-top:8px;font-size:13px;font-weight:700;">公開されている要素</div>';
     for (const e of res.publics){
-      h += '<div style="font-size:13.5px;margin:2px 0;">・' + esc(e.label)
+      inner += '<div style="font-size:13.5px;margin:2px 0;">・' + esc(e.label)
         + ' <span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e) + '</div>';
     }
   }
-  h += '</div>';
-  return h;
+  inner += '</div>';
+  return '<details class="fold"><summary>作品情報・公開されている要素を表示</summary><div class="foldbody">' + inner + '</div></details>';
 }
 function sealedCard(title, warnText, btnLabel){
   return '<div class="sealed"><div class="seal">🔒</div>'
@@ -697,12 +701,13 @@ function reportBox(text, label){
     + '</div></details>';
 }
 function renderJudgeStage1(res){
-  let h = renderPublicBlock(res);
+  let h = thirdPartyBanner(res);
   if (res.unknown.length){
     h += '<div class="verdict warn">この作品コードには、このページがまだ対応していない要素が含まれています（' + res.unknown.length + '件）。ページが更新されるまで、その要素は判定できません。</div>';
   }
   if (!res.hasSettings){
-    h += '<div class="verdict warn"><b>あなたの苦手要素が未設定です。</b><br>上のステップ1で設定してから判定すると、この作品との照合結果が表示されます。現在は公開情報のみ表示しています。</div>';
+    h += '<div class="verdict warn"><b>あなたの苦手要素が未設定です。</b><br>上のステップ1で設定してから判定すると、この作品との照合結果が表示されます。</div>';
+    h += renderWorkInfoFold(res);
     $("judgeResult").innerHTML = h;
     return;
   }
@@ -711,17 +716,20 @@ function renderJudgeStage1(res){
   const hasExtra = !!(res.work.ex && String(res.work.ex).length);
   if (!matched){
     h += '<div class="verdict safe"><b>あなたの設定に該当する要素はありませんでした。</b></div>';
+    h += reportBox(makeReport(res, false), "GM・KP向け報告テキスト（開封前）");
     if (hasUnset){
       h += '<div class="verdict mute">ただし、あなたが未設定（未確認）の要素がこの作品に含まれています。詳細は開封すると確認できます。</div>';
-      h += sealedCard("未確認の要素と追加の注意書きを確認できます。", "表示される内容には、作品のネタバレが含まれる可能性があります。");
+      h += sealedCard("未確認の要素を確認できます。", "表示される内容には、作品のネタバレが含まれる可能性があります。");
     } else if (hasExtra){
-      h += sealedCard("作者からの追加の注意書きがあります。", "表示して確認できます。", "表示する");
+      h += '<div class="hitgroup"><h4>その他の注意要素（登録者記入）</h4>'
+        + '<div class="hititem" style="white-space:pre-wrap;">' + esc(res.work.ex) + '</div></div>';
     }
   } else {
     h += '<div class="verdict warn"><b>あなたの設定に該当する要素があります。</b><br>件数や内容は、ネタバレ防止のためここでは表示されません。</div>';
-    h += sealedCard("どの要素に該当するか確認しますか？", "表示される内容には、作品のネタバレが含まれる可能性があります。ネタバレを避けたい場合は開封せず、下の報告用テキストでGM・KPにご相談ください。");
+    h += reportBox(makeReport(res, false), "GM・KP向け報告テキスト（開封前）");
+    h += sealedCard("どの要素に該当するか確認しますか？", "表示される内容には、作品のネタバレが含まれる可能性があります。ネタバレを避けたい場合は開封せず、上の報告テキストでGM・KPにご相談ください。");
   }
-  h += reportBox(makeReport(res, false), "GM・KP向け報告用テキスト（開封前・詳細を含みません）");
+  h += renderWorkInfoFold(res);
   $("judgeResult").innerHTML = h;
   const btn = $("revealBtn");
   if (btn) btn.addEventListener("click", () => renderJudgeStage2(currentJudge));
@@ -746,7 +754,7 @@ function renderHitItem(e){
 }
 function renderJudgeStage2(res){
   res.revealed = true;
-  let h = renderPublicBlock(res);
+  let h = thirdPartyBanner(res);
   let cls, verdict;
   if (res.hard.length || res.hasSecretMatch){
     cls = "danger";
@@ -761,6 +769,7 @@ function renderJudgeStage2(res){
     cls = "safe"; verdict = "あなたの設定に該当する要素はありませんでした。";
   }
   h += '<div class="verdict ' + cls + '"><b>' + esc(verdict) + '</b></div>';
+  h += reportBox(makeReport(res, true), "GM・KP向け報告テキスト（開封後・詳細つき）");
   if (res.hard.length){
     h += '<div class="hitgroup danger"><h4>「絶対無理」に該当</h4>';
     for (const e of res.hard) h += renderHitItem(e);
@@ -784,27 +793,21 @@ function renderJudgeStage2(res){
     h += '<div class="hitgroup"><h4>自由記入（あなたの入力）</h4>'
       + '<div class="hititem" style="white-space:pre-wrap;">' + esc(playerState.memo) + '</div></div>';
   }
-  h += reportBox(makeReport(res, true), "GM・KP向け報告用テキスト（開封後・詳細つき）");
   h += '<p class="note">「口外禁止」の要素は、SNSや会話での言及をお控えください。この画面のスクリーンショットの公開も、内容によってはネタバレにあたります。</p>';
+  h += renderWorkInfoFold(res);
   $("judgeResult").innerHTML = h;
 }
 
 /* ================= 報告用テキスト ================= */
-function reportItemLine(e){
-  if (e.d === "C") return null; // 秘匿は件数のみ
-  let line = "・" + e.label + "（" + SEV_LABEL[e.sev] + "）";
-  const tgs = e.tags.map((t) => TAG_LABEL[Number(t)]).filter(Boolean);
-  if (tgs.length) line += "［形態: " + tgs.join("・") + "］";
-  const parts = [line];
-  if (playerState.notes[e.id]) parts.push("　補足メモ: " + playerState.notes[e.id]);
-  if (e.warn) parts.push("　登録者注意文: " + e.warn);
-  return parts.join("\n");
+function reportNames(arr){
+  return arr.filter((e) => e.d !== "C").map((e) => {
+    const memo = playerState.notes[e.id];
+    return e.label + (memo ? "（メモ: " + memo + "）" : "");
+  });
 }
 function makeReport(res, revealed){
   const L = [];
-  L.push(revealed ? "【苦手要素チェック 報告（開封済み）】" : "【苦手要素チェック 報告（未開封）】");
-  L.push("作品: " + (res.work.t || "（タイトル未設定）"));
-  L.push("コード発行者: " + issuerLabel(res.work));
+  L.push("【苦手要素チェック報告】" + (res.work.t || "（作品名未設定）"));
   if (!revealed){
     const matched = res.hard.length + res.soft.length > 0;
     L.push("判定: " + (matched ? "該当あり（詳細は未開封です。判断をお願いします）" : "設定済みの要素への該当なし"));
@@ -815,26 +818,18 @@ function makeReport(res, revealed){
     else if (res.soft.length) verdict = "要確認";
     else verdict = "設定済みの要素への該当なし";
     L.push("総合判定: " + verdict);
-    const groups = [
-      ["■「絶対無理」に該当", res.hard],
-      ["■「要確認」に該当", res.soft],
-      ["■未確認（未設定）の要素", res.unset]
-    ];
-    for (const [title, arr] of groups){
-      const lines = arr.map(reportItemLine).filter(Boolean);
-      const secret = arr.filter((e) => e.d === "C").length;
-      if (lines.length || secret){
-        L.push(title);
-        for (const ln of lines) L.push(ln);
-        if (secret) L.push("・（秘匿設定の要素 " + secret + "件を含みます）");
-      }
+    const hardNames = reportNames(res.hard);
+    const softNames = reportNames(res.soft);
+    if (hardNames.length) L.push("絶対無理: " + hardNames.join("／"));
+    if (softNames.length) L.push("要確認: " + softNames.join("／"));
+    if (res.unset.length){
+      const names = res.unset.filter((e) => e.d !== "C").map((e) => e.label);
+      L.push("未確認（未設定）: " + res.unset.length + "件" + (names.length ? "（" + names.join("、") + "）" : ""));
     }
-    if (res.secretHitCount) L.push("■秘匿設定の要素に該当: " + res.secretHitCount + "件（内容は表示されません）");
-    if (res.work.ex) L.push("■その他の注意要素（登録者記入）:\n" + res.work.ex);
+    if (res.secretHitCount) L.push("秘匿設定の要素に該当: " + res.secretHitCount + "件（内容非表示）");
   }
-  if (playerState.memo) L.push("■自由記入（プレイヤー）:\n" + playerState.memo);
-  L.push("リストv" + (Number(res.work.lv) || 1) + " / ツールv" + TOOL_VERSION);
-  L.push("※本報告はGM・KP確認用です。SNS等への転載はお控えください。");
+  if (playerState.memo) L.push("自由記入: " + playerState.memo);
+  L.push("※GM・KP確認用です。SNS等への転載はお控えください。");
   return L.join("\n");
 }
 

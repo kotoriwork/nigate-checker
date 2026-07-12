@@ -4,7 +4,7 @@
 // 手動で編集する場合も、id は絶対に変更・再利用しないでください。
 // =====================================================
 window.NIGATE_LIST = {
-  version: 1,
+  version: 2,
   updated: "2026-07-12",
   categories: [
     {
@@ -121,7 +121,8 @@ window.NIGATE_LIST = {
         { id: "sys02", label: "選択ミスによる「詰み」があり得る構造", since: 1 },
         { id: "sys03", label: "メタ演出（第四の壁越え・プレイヤーへの直接干渉）", since: 1 },
         { id: "sys04", label: "長時間の重い空気が続く進行", since: 1 },
-        { id: "sys05", label: "アドリブ・ロールプレイ力を強く要求される場面", since: 1 }
+        { id: "sys05", label: "アドリブ・ロールプレイ力を強く要求される場面", since: 1 },
+        { id: "sys06", label: "生成AI画像の使用", since: 2 }
       ]
     }
   ]
