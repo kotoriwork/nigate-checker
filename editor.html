@@ -7,6 +7,7 @@
 <style>
 :root{ --ink:#23262E; --sub:#5A6072; --bg:#F2F4F7; --card:#fff; --line:#DDE1E8; --indigo:#33415F; --danger:#A62F2A; --safe:#2E6B4F; }
 *{box-sizing:border-box;}
+textarea{resize:vertical;}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;font-size:14px;line-height:1.7;}
 header{background:#252F45;color:#fff;padding:18px;}
 .wrap{max-width:760px;margin:0 auto;padding:0 14px 80px;}
@@ -88,22 +89,22 @@ function esc(s){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
   });
 }
-var SRC = window.NIGATE_LIST;
-var state = JSON.parse(JSON.stringify(SRC)); // 編集用コピー
-var nextVersion = Number(state.version) + 1;
+let SRC = window.NIGATE_LIST;
+let state = JSON.parse(JSON.stringify(SRC)); // 編集用コピー
+let nextVersion = Number(state.version) + 1;
 
 function render(){
-  var h = "";
-  for (var c = 0; c < state.categories.length; c++){
-    var cat = state.categories[c];
+  let h = "";
+  for (let c = 0; c < state.categories.length; c++){
+    let cat = state.categories[c];
     h += '<div class="cat" data-c="' + c + '">'
       + '<div class="cathead">'
       + '<span class="pill">' + esc(cat.id) + '</span>'
       + '<input type="text" data-role="catname" value="' + esc(cat.name) + '">'
       + '<span class="pill">' + (cat.tags ? "形態タグ: あり" : "形態タグ: なし") + '</span>'
       + '</div>';
-    for (var i = 0; i < cat.items.length; i++){
-      var it = cat.items[i];
+    for (let i = 0; i < cat.items.length; i++){
+      let it = cat.items[i];
       h += '<div class="item' + (it.retired ? " retired" : "") + '" data-c="' + c + '" data-i="' + i + '">'
         + '<span class="iid">' + esc(it.id) + '</span>'
         + '<input type="text" data-role="label" value="' + esc(it.label) + '"' + (it.retired ? " disabled" : "") + '>'
@@ -125,55 +126,55 @@ function render(){
   $("nextVer").textContent = "v" + nextVersion;
 }
 function syncInputs(){
-  var catEls = document.querySelectorAll(".cat");
-  for (var e = 0; e < catEls.length; e++){
-    var c = Number(catEls[e].getAttribute("data-c"));
+  let catEls = document.querySelectorAll(".cat");
+  for (let e = 0; e < catEls.length; e++){
+    let c = Number(catEls[e].getAttribute("data-c"));
     state.categories[c].name = catEls[e].querySelector('[data-role="catname"]').value.trim() || state.categories[c].name;
   }
-  var itemEls = document.querySelectorAll(".item");
-  for (var k = 0; k < itemEls.length; k++){
-    var ci = Number(itemEls[k].getAttribute("data-c"));
-    var ii = Number(itemEls[k].getAttribute("data-i"));
-    var input = itemEls[k].querySelector('[data-role="label"]');
+  let itemEls = document.querySelectorAll(".item");
+  for (let k = 0; k < itemEls.length; k++){
+    let ci = Number(itemEls[k].getAttribute("data-c"));
+    let ii = Number(itemEls[k].getAttribute("data-i"));
+    let input = itemEls[k].querySelector('[data-role="label"]');
     if (input && !input.disabled){
-      var v = input.value.trim();
+      let v = input.value.trim();
       if (v) state.categories[ci].items[ii].label = v;
     }
   }
 }
 function nextItemId(cat){
-  var max = 0;
-  for (var i = 0; i < cat.items.length; i++){
-    var m = String(cat.items[i].id).match(/(\d+)$/);
+  let max = 0;
+  for (let i = 0; i < cat.items.length; i++){
+    let m = String(cat.items[i].id).match(/(\d+)$/);
     if (m) max = Math.max(max, Number(m[1]));
   }
-  var n = max + 1;
+  let n = max + 1;
   return cat.id + (n < 10 ? "0" + n : String(n));
 }
 $("cats").addEventListener("click", function(ev){
-  var t = ev.target;
-  var act = t.getAttribute && t.getAttribute("data-act");
+  let t = ev.target;
+  let act = t.getAttribute && t.getAttribute("data-act");
   if (!act) return;
   syncInputs();
   if (act === "additem"){
-    var c = Number(t.getAttribute("data-c"));
-    var input = t.parentNode.querySelector('[data-role="newlabel"]');
-    var label = input.value.trim();
+    let c = Number(t.getAttribute("data-c"));
+    let input = t.parentNode.querySelector('[data-role="newlabel"]');
+    let label = input.value.trim();
     if (!label){ showMsg("catMsg", "項目名を入力してから追加してください。", "err"); return; }
-    var cat = state.categories[c];
+    let cat = state.categories[c];
     cat.items.push({ id: nextItemId(cat), label: label, since: nextVersion });
     showMsg("catMsg", "項目を追加しました（この項目は生成後のバージョンから有効になります）。", "ok");
     render(); return;
   }
-  var row = t.closest(".item");
+  let row = t.closest(".item");
   if (!row) return;
-  var ci = Number(row.getAttribute("data-c"));
-  var ii = Number(row.getAttribute("data-i"));
-  var items = state.categories[ci].items;
+  let ci = Number(row.getAttribute("data-c"));
+  let ii = Number(row.getAttribute("data-i"));
+  let items = state.categories[ci].items;
   if (act === "up" && ii > 0){
-    var a = items[ii - 1]; items[ii - 1] = items[ii]; items[ii] = a;
+    let a = items[ii - 1]; items[ii - 1] = items[ii]; items[ii] = a;
   } else if (act === "down" && ii < items.length - 1){
-    var b = items[ii + 1]; items[ii + 1] = items[ii]; items[ii] = b;
+    let b = items[ii + 1]; items[ii + 1] = items[ii]; items[ii] = b;
   } else if (act === "retire"){
     items[ii].retired = true;
   } else if (act === "revive"){
@@ -183,12 +184,12 @@ $("cats").addEventListener("click", function(ev){
 });
 $("addCatBtn").addEventListener("click", function(){
   syncInputs();
-  var name = $("newCatName").value.trim();
-  var prefix = $("newCatPrefix").value.trim().toLowerCase();
+  let name = $("newCatName").value.trim();
+  let prefix = $("newCatPrefix").value.trim().toLowerCase();
   if (!name || !/^[a-z]{3}$/.test(prefix)){
     showMsg("catMsg", "分類名と、英小文字ちょうど3文字のIDを入力してください（例: add）。", "err"); return;
   }
-  for (var c = 0; c < state.categories.length; c++){
+  for (let c = 0; c < state.categories.length; c++){
     if (state.categories[c].id === prefix){
       showMsg("catMsg", "そのID（" + prefix + "）はすでに使われています。別の3文字にしてください。", "err"); return;
     }
@@ -199,24 +200,24 @@ $("addCatBtn").addEventListener("click", function(){
   render();
 });
 function showMsg(id, text, kind){
-  var el = $(id); el.textContent = text; el.className = "msg " + kind;
+  let el = $(id); el.textContent = text; el.className = "msg " + kind;
 }
 function jstr(s){ return JSON.stringify(String(s)); }
 function today(){
-  var d = new Date();
-  var mm = String(d.getMonth() + 1).padStart(2, "0");
-  var dd = String(d.getDate()).padStart(2, "0");
+  let d = new Date();
+  let mm = String(d.getMonth() + 1).padStart(2, "0");
+  let dd = String(d.getDate()).padStart(2, "0");
   return d.getFullYear() + "-" + mm + "-" + dd;
 }
 $("genBtn").addEventListener("click", function(){
   syncInputs();
-  var empty = [];
-  for (var c = 0; c < state.categories.length; c++){
-    var alive = 0;
-    for (var i = 0; i < state.categories[c].items.length; i++) if (!state.categories[c].items[i].retired) alive++;
+  let empty = [];
+  for (let c = 0; c < state.categories.length; c++){
+    let alive = 0;
+    for (let i = 0; i < state.categories[c].items.length; i++) if (!state.categories[c].items[i].retired) alive++;
     if (alive === 0 && state.categories[c].items.length === 0) empty.push(state.categories[c].name);
   }
-  var out = "";
+  let out = "";
   out += "// =====================================================\n";
   out += "// 苦手要素リスト データファイル\n";
   out += "// このファイルは editor.html（リスト編集ツール）で生成できます。\n";
@@ -226,13 +227,13 @@ $("genBtn").addEventListener("click", function(){
   out += "  version: " + nextVersion + ",\n";
   out += "  updated: " + jstr(today()) + ",\n";
   out += "  categories: [\n";
-  for (var c2 = 0; c2 < state.categories.length; c2++){
-    var cat = state.categories[c2];
+  for (let c2 = 0; c2 < state.categories.length; c2++){
+    let cat = state.categories[c2];
     out += "    {\n";
     out += "      id: " + jstr(cat.id) + ", name: " + jstr(cat.name) + ", tags: " + (cat.tags ? "true" : "false") + ",\n";
     out += "      items: [\n";
-    for (var i2 = 0; i2 < cat.items.length; i2++){
-      var it = cat.items[i2];
+    for (let i2 = 0; i2 < cat.items.length; i2++){
+      let it = cat.items[i2];
       out += "        { id: " + jstr(it.id) + ", label: " + jstr(it.label) + ", since: " + (Number(it.since) || 1)
           + (it.retired ? ", retired: true" : "") + " }" + (i2 < cat.items.length - 1 ? "," : "") + "\n";
     }
@@ -247,9 +248,9 @@ $("genBtn").addEventListener("click", function(){
     + (empty.length ? " 注意: 項目が1つもない分類があります（" + empty.join("、") + "）。" : ""), "ok");
 });
 $("copyBtn").addEventListener("click", function(){
-  var ta = $("outText"); ta.focus(); ta.select();
-  var btn = this;
-  var done = function(){ var t = btn.textContent; btn.textContent = "コピーしました"; setTimeout(function(){ btn.textContent = t; }, 1500); };
+  let ta = $("outText"); ta.focus(); ta.select();
+  let btn = this;
+  let done = function(){ let t = btn.textContent; btn.textContent = "コピーしました"; setTimeout(function(){ btn.textContent = t; }, 1500); };
   if (navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(ta.value).then(done, function(){ document.execCommand("copy"); done(); });
   } else { document.execCommand("copy"); done(); }

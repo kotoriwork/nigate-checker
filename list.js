@@ -26,7 +26,8 @@ window.NIGATE_LIST = {
         { id: "los03", label: "NPCの死亡", since: 1 },
         { id: "los04", label: "親しい間柄のNPC（仲間・恩人等）の死", since: 1 },
         { id: "los05", label: "自殺・自傷", since: 1 },
-        { id: "los06", label: "看取り・死別", since: 1 }
+        { id: "los06", label: "看取り・死別", since: 1 },
+        { id: "los07", label: "他プレイヤーのキャラクターの確定ロスト", since: 1 }
       ]
     },
     {

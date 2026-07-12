@@ -18,6 +18,8 @@
 body{margin:0;background:var(--bg);color:var(--ink);
   font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP","Yu Gothic","Meiryo",sans-serif;
   font-size:15px;line-height:1.7;-webkit-text-size-adjust:100%;}
+.hidden{display:none !important;}
+textarea{resize:vertical;}
 header{background:var(--indigo-deep);color:#F4F5F8;padding:26px 18px 20px;}
 .hwrap{max-width:720px;margin:0 auto;}
 h1{margin:0;font-size:22px;letter-spacing:.06em;}
@@ -37,26 +39,34 @@ h3{font-size:15px;margin:14px 0 6px;}
 .stepno{display:inline-block;background:var(--indigo);color:#fff;font-size:12px;border-radius:999px;
   padding:2px 10px;margin-right:8px;vertical-align:2px;}
 p.note{font-size:13px;color:var(--sub);margin:6px 0;}
+.infobox{font-size:13px;color:var(--sub);background:var(--mute-bg);border-radius:8px;padding:8px 10px;margin:8px 0;}
 details.cat{border:1px solid var(--line);border-radius:10px;margin:8px 0;background:#FCFCFD;overflow:hidden;}
 details.cat summary{cursor:pointer;padding:11px 12px;font-weight:700;font-size:14px;list-style:none;
   display:flex;align-items:center;gap:8px;}
 details.cat summary::-webkit-details-marker{display:none;}
 details.cat summary::before{content:"▸";color:var(--sub);transition:.15s;}
 details.cat[open] summary::before{transform:rotate(90deg);}
+details.fold{border:1px solid var(--line);border-radius:10px;margin:10px 0;background:#FCFCFD;}
+details.fold summary{cursor:pointer;padding:10px 12px;font-size:13.5px;font-weight:700;list-style:none;}
+details.fold summary::-webkit-details-marker{display:none;}
+details.fold .foldbody{padding:0 12px 12px;}
 .catbadge{margin-left:auto;font-size:11px;color:var(--sub);background:var(--mute-bg);border-radius:999px;padding:1px 8px;font-weight:400;}
 .catbadge.hit{background:var(--warn-bg);color:var(--warn);font-weight:700;}
 .catbody{padding:4px 12px 12px;border-top:1px solid var(--line);}
-.allok{font-size:12px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer;
-  color:var(--indigo);margin:8px 0 4px;font-family:inherit;}
+.allbtn{font-size:12px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px;cursor:pointer;
+  color:var(--indigo);margin:8px 6px 4px 0;font-family:inherit;}
 .itemrow{padding:9px 0;border-bottom:1px dashed var(--line);}
 .itemrow:last-child{border-bottom:none;}
 .itemlabel{font-size:14px;margin-bottom:6px;}
 .seg{display:flex;gap:6px;flex-wrap:wrap;}
-.seg button{flex:1;min-width:86px;border:1px solid var(--line);background:#fff;border-radius:8px;
+.seg button{flex:1;min-width:72px;border:1px solid var(--line);background:#fff;border-radius:8px;
   padding:6px 4px;font-size:12.5px;cursor:pointer;color:var(--sub);font-family:inherit;}
+.seg button.selU{background:#E6E9F2;color:var(--indigo);border-color:#B9C2D8;font-weight:700;}
 .seg button.sel0{background:var(--mute-bg);color:var(--ink);border-color:#C6CBD6;font-weight:700;}
 .seg button.sel1{background:var(--warn-bg);color:var(--warn);border-color:#E0C48A;font-weight:700;}
 .seg button.sel2{background:var(--danger-bg);color:var(--danger);border-color:#E3B1AE;font-weight:700;}
+.itemnote{margin-top:6px;}
+.itemnote textarea{width:100%;font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:6px;padding:5px 7px;min-height:36px;}
 .subopts{margin-top:8px;padding:10px;background:var(--mute-bg);border-radius:8px;font-size:13px;}
 .subopts label{display:inline-flex;align-items:center;gap:4px;margin:2px 10px 2px 0;}
 .subopts select,.subopts textarea,.subopts input[type=text]{font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:6px;padding:4px 6px;}
@@ -66,21 +76,25 @@ textarea.big, input.big{width:100%;font-family:inherit;font-size:14px;border:1px
 textarea.big{min-height:64px;}
 textarea.code{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;border:1px solid var(--line);
   border-radius:8px;padding:8px;min-height:86px;word-break:break-all;}
+textarea.report{width:100%;font-family:inherit;font-size:12.5px;border:1px solid var(--line);border-radius:8px;padding:8px;min-height:120px;}
 .btn{display:inline-block;background:var(--indigo);color:#fff;border:none;border-radius:9px;
   padding:11px 18px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin:6px 6px 0 0;}
 .btn.ghost{background:#fff;color:var(--indigo);border:1.5px solid var(--indigo);}
 .btn.small{padding:6px 12px;font-size:12.5px;font-weight:400;}
+.radios label{display:inline-flex;align-items:center;gap:5px;margin-right:14px;font-size:14px;}
 .msg{font-size:13px;margin:6px 0;padding:8px 10px;border-radius:8px;display:none;}
 .msg.ok{display:block;background:var(--safe-bg);color:var(--safe);}
 .msg.err{display:block;background:var(--danger-bg);color:var(--danger);}
 /* 判定結果 */
 .pubbox{border-left:4px solid var(--indigo);padding-left:12px;margin:12px 0;}
+.byline{font-size:12.5px;color:var(--sub);}
+.thirdparty{font-size:12.5px;background:var(--warn-bg);color:var(--warn);border-radius:6px;padding:5px 8px;margin:6px 0;}
 .verdict{border-radius:var(--radius);padding:14px;margin:12px 0;font-size:14px;}
 .verdict.safe{background:var(--safe-bg);color:var(--safe);border:1px solid #BFDCCB;}
 .verdict.warn{background:var(--warn-bg);color:var(--warn);border:1px solid #E5CE9C;}
 .verdict.danger{background:var(--danger-bg);color:var(--danger);border:1px solid #E5B7B4;}
+.verdict.mute{background:var(--mute-bg);color:var(--sub);border:1px solid var(--line);}
 .verdict b{font-size:15px;}
-/* 開封カード */
 .sealed{border:2px dashed var(--indigo);border-radius:var(--radius);padding:18px;text-align:center;
   background:repeating-linear-gradient(-45deg,#FAFBFD,#FAFBFD 12px,#F3F5FA 12px,#F3F5FA 24px);margin:12px 0;}
 .sealed .seal{font-size:26px;}
@@ -89,7 +103,7 @@ textarea.code{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-
 .hitgroup h4{margin:0 0 6px;font-size:14px;}
 .hitgroup.danger h4{color:var(--danger);}
 .hitgroup.warn h4{color:var(--warn);}
-.hitgroup.unset h4{color:var(--sub);}
+.hitgroup.unset h4{color:var(--sub);font-weight:400;}
 .hititem{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0;background:#fff;font-size:13.5px;}
 .hititem .nm{font-weight:700;font-size:14px;}
 .chip{display:inline-block;font-size:11px;border-radius:999px;padding:1px 8px;margin:2px 4px 2px 0;background:var(--mute-bg);color:var(--sub);}
@@ -99,21 +113,22 @@ textarea.code{width:100%;font-family:ui-monospace,Menlo,Consolas,monospace;font-
 .mention.no{background:var(--danger-bg);color:var(--danger);}
 .mention.yes{background:var(--safe-bg);color:var(--safe);}
 .authorwarn{font-size:13px;margin-top:6px;padding:6px 8px;background:var(--mute-bg);border-radius:6px;}
+.plnote{font-size:12.5px;margin-top:6px;padding:6px 8px;background:#F3F5FA;border-radius:6px;color:var(--indigo);}
 .secretitem{border-style:dashed;color:var(--sub);}
 hr.thin{border:none;border-top:1px solid var(--line);margin:14px 0;}
 footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:var(--sub);}
-@media(max-width:420px){ .seg button{min-width:30%;} }
+@media(max-width:420px){ .seg button{min-width:46%;} }
 </style>
 </head>
 <body>
 <header><div class="hwrap">
   <h1>苦手要素チェッカー</h1>
   <p class="tagline">シナリオの苦手要素を、ネタバレなしで事前チェック。TRPG（クトゥルフ神話TRPG・マーダーミステリー・ストーリープレイング等）向け。</p>
-  <p class="privacy">入力内容はすべてお使いの端末内でのみ処理され、外部に送信されません。</p>
+  <p class="privacy">遊ぶ人の設定も、作品の登録内容も、すべてお使いの端末内でのみ処理されます。サーバーには一切保存・送信されません。</p>
 </div></header>
 <nav><div class="tabs">
   <button class="tab on" data-page="player">遊ぶ人</button>
-  <button class="tab" data-page="author">作者</button>
+  <button class="tab" data-page="author">作者・GM</button>
   <button class="tab" data-page="help">使い方</button>
 </div></nav>
 <main>
@@ -122,22 +137,23 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
 <section class="page on" id="page-player">
   <div class="card">
     <h2><span class="stepno">1</span>自分の苦手要素を設定する</h2>
-    <p class="note">分類ごとに開いて、各項目の強さを選んでください。初期値はすべて「気にしない」です。気になる分類だけ開けばOKです。</p>
+    <p class="note">分類ごとに開いて、各項目の状態を選んでください。「未設定」のままの項目は、判定時に「未確認」として扱われます。「要確認」「絶対無理」を選ぶと、任意の補足メモ（例: 文章なら平気、画像は無理）を残せます。</p>
+    <button type="button" class="allbtn" id="pAllNone">未設定の項目をまとめて「気にしない」にする</button>
     <div id="playerCats"></div>
-    <h3>自分用メモ（判定には使われません）</h3>
-    <textarea class="big" id="pMemo" placeholder="リストにない自分の苦手要素などをメモできます。判定結果の画面に一緒に表示されます。"></textarea>
+    <h3>自由記入（判定には使われません）</h3>
+    <textarea class="big" id="pMemo" placeholder="リストにない自分の苦手要素などを書けます。判定結果とGM・KP向け報告に一緒に表示されます。"></textarea>
     <div>
       <button class="btn" id="pSave">この端末に保存する</button>
       <button class="btn ghost" id="pExport">マイ設定コードを書き出す</button>
       <button class="btn ghost" id="pImportOpen">マイ設定コードを読み込む</button>
     </div>
     <div class="msg" id="pSaveMsg"></div>
-    <div id="pExportBox" style="display:none">
+    <div id="pExportBox" class="hidden">
       <p class="note">このコードを控えておくと、別の端末やブラウザで同じ設定を読み込めます。</p>
       <textarea class="code" id="pExportCode" readonly></textarea>
-      <button class="btn small ghost" id="pCopyExport">コードをコピー</button>
+      <button class="btn small ghost" data-copy="pExportCode">コードをコピー</button>
     </div>
-    <div id="pImportBox" style="display:none">
+    <div id="pImportBox" class="hidden">
       <p class="note">書き出したマイ設定コードを貼り付けてください。現在の設定は上書きされます。</p>
       <textarea class="code" id="pImportCode" placeholder="NGTP～ で始まるコード"></textarea>
       <button class="btn small" id="pImportRun">読み込む</button>
@@ -147,28 +163,53 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
 
   <div class="card">
     <h2><span class="stepno">2</span>作品コードで判定する</h2>
-    <p class="note">作者が配布している「作品コード」を貼り付けてください。あなたの設定と照合し、該当の有無だけを表示します。具体的な内容は、あなたが同意した場合にのみ開示されます。</p>
+    <p class="note">作者が配布している「作品コード」を貼り付けてください（判定用URLから開いた場合は自動で入力されます）。まず該当の有無だけが表示され、具体的な内容はあなたが同意した場合にのみ開示されます。</p>
     <textarea class="code" id="workCode" placeholder="NGTW～ で始まる作品コード"></textarea>
-    <button class="btn" id="judgeBtn">判定する</button>
+    <div>
+      <button class="btn" id="judgeBtn">判定する</button>
+      <button class="btn ghost small" id="sampleBtn">お試し用サンプルを入れる</button>
+    </div>
     <div class="msg" id="judgeMsg"></div>
     <div id="judgeResult"></div>
   </div>
 </section>
 
-<!-- ================= 作者 ================= -->
+<!-- ================= 作者・GM ================= -->
 <section class="page" id="page-author">
+  <details class="fold" id="aLoadFold">
+    <summary>発行済みの作品コードを読み込んで編集する</summary>
+    <div class="foldbody">
+      <p class="note">修正したい作品コードを貼り付けてください。パスワード付きのコードは、設定したパスワードの入力が必要です。</p>
+      <textarea class="code" id="aLoadCode" placeholder="NGTW～ で始まる作品コード"></textarea>
+      <input class="big" type="text" id="aLoadPw" placeholder="パスワード（設定されている場合のみ入力）" style="margin-top:6px;">
+      <button class="btn small" id="aLoadRun">読み込む</button>
+      <div class="msg" id="aLoadMsg"></div>
+    </div>
+  </details>
+
   <div class="card">
-    <h2><span class="stepno">1</span>作品情報</h2>
+    <h2><span class="stepno">1</span>作品情報と発行者</h2>
     <h3>作品タイトル（任意）</h3>
     <input class="big" type="text" id="aTitle" placeholder="例: 深淵より愛をこめて">
     <h3>全体コメント（任意・判定前から全員に公開されます）</h3>
-    <textarea class="big" id="aComment" placeholder="例: 本作に恋愛要素・性的要素はありません。ホラー演出は控えめです。"></textarea>
+    <textarea class="big" id="aComment" placeholder="例: 本作に恋愛要素はありません。ホラー演出は控えめです。"></textarea>
+    <h3>発行者区分（必須）</h3>
+    <div class="radios">
+      <label><input type="radio" name="aBy" value="1">作者本人</label>
+      <label><input type="radio" name="aBy" value="2">第三者（KP・GM等）</label>
+    </div>
+    <p class="note">第三者として発行した場合、判定画面に「作者以外が作成したコード」であることが明示されます。</p>
+    <h3>発行者名（任意）</h3>
+    <input class="big" type="text" id="aByName" placeholder="例: 卓のGMの〇〇">
+    <h3>参照URL（任意）</h3>
+    <input class="big" type="text" id="aByUrl" placeholder="例: BOOTHの商品ページや作者の告知ページのURL">
+    <p class="note">判定画面にそのまま文字として表示されます。作者本人が商品ページ等を載せておくと、遊ぶ人が本物かどうかを確かめる手がかりになります。</p>
   </div>
 
   <div class="card">
     <h2><span class="stepno">2</span>該当する苦手要素を登録</h2>
-    <p class="note">該当する項目に「示唆・軽度」または「明確にあり」を選ぶと、開示方法などの詳細設定が開きます。</p>
-    <div style="font-size:13px;color:var(--sub);background:var(--mute-bg);border-radius:8px;padding:8px 10px;margin-bottom:8px;">
+    <p class="note">「示唆・軽度」または「明確にあり」を選ぶと、開示方法などの詳細設定が開きます。「なし」は「この要素はないと確認済み」の記録で、「未設定」は「未確認」の意味です（どちらも判定では該当になりません）。</p>
+    <div class="infobox">
       開示方法の意味<br>
       <b>公開</b>: 判定前から誰でも見えます（募集要項に書ける内容向け）<br>
       <b>限定開示</b>: 該当した人が同意した場合のみ表示。口外の可否と注意文を設定できます<br>
@@ -181,21 +222,24 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
 
   <div class="card">
     <h2><span class="stepno">3</span>作品コードを発行</h2>
+    <h3>編集用パスワード（任意）</h3>
+    <input class="big" type="text" id="aPw" placeholder="設定すると、このコードの「読み込んで編集」にパスワードが必要になります">
+    <p class="note">パスワードを忘れた場合の再発行はできません（作り直しになります）。これは編集画面の鍵であり、暗号化ではありません。詳しくは使い方ページを参照。</p>
     <button class="btn" id="aGenerate">作品コードを生成する</button>
     <div class="msg" id="aGenMsg"></div>
-    <div id="aOutBox" style="display:none">
+    <div id="aOutBox" class="hidden">
       <h3>作品コード</h3>
       <textarea class="code" id="aOutCode" readonly></textarea>
-      <button class="btn small ghost" id="aCopyCode">コードをコピー</button>
+      <button class="btn small ghost" data-copy="aOutCode">コードをコピー</button>
+      <div id="aUrlWrap">
+        <h3>判定用URL（開くと自動で判定されます）</h3>
+        <textarea class="code" id="aOutUrl" readonly></textarea>
+        <button class="btn small ghost" data-copy="aOutUrl">URLをコピー</button>
+      </div>
       <h3>掲載用テンプレ（BOOTH・X向け）</h3>
       <textarea class="code" id="aOutTpl" readonly></textarea>
-      <button class="btn small ghost" id="aCopyTpl">テンプレをコピー</button>
+      <button class="btn small ghost" data-copy="aOutTpl">テンプレをコピー</button>
     </div>
-    <hr class="thin">
-    <p class="note">発行済みの作品コードを読み込んで、内容を修正することもできます。</p>
-    <textarea class="code" id="aLoadCode" placeholder="NGTW～ で始まる作品コード"></textarea>
-    <button class="btn small ghost" id="aLoadRun">コードを読み込んで編集</button>
-    <div class="msg" id="aLoadMsg"></div>
   </div>
 </section>
 
@@ -203,83 +247,135 @@ footer{max-width:720px;margin:0 auto;padding:0 14px 40px;font-size:11.5px;color:
 <section class="page" id="page-help">
   <div class="card">
     <h2>このページについて</h2>
-    <p>TRPG（クトゥルフ神話TRPG・マーダーミステリー・ストーリープレイング等）のシナリオに含まれる「苦手になりやすい要素」を、ネタバレを避けながら事前に確認するためのツールです。</p>
+    <p>TRPG（クトゥルフ神話TRPG・マーダーミステリー・ストーリープレイング等）のシナリオに含まれる「苦手になりやすい要素」を、ネタバレを避けながら事前に確認するためのツールです。判定は作者やGM・KPが登録した内容（自己申告）に基づきます。</p>
+
     <h3>遊ぶ人の使い方</h3>
-    <p>1. 「遊ぶ人」タブで自分の苦手要素と強さを設定し、端末に保存します。<br>
-    2. 作者が配布している作品コードを貼り付けて判定します。<br>
-    3. まず「該当あり／なし」だけが表示されます。詳細の確認はネタバレを含む可能性があるため、同意した場合のみ開示されます。</p>
-    <h3>作者の使い方</h3>
-    <p>1. 「作者」タブで作品に含まれる要素を登録します。<br>
-    2. 要素ごとに開示方法（公開／限定開示／秘匿）と、注意文・口外の可否を設定できます。<br>
-    3. 発行された作品コードを、BOOTHの商品ページやXの告知などに掲載してください。</p>
-    <h3>強さの意味</h3>
-    <p>気にしない: 判定対象になりません。<br>
-    注意でOK: 該当すると注意として表示されます。<br>
+    <p>1. 「遊ぶ人」タブで自分の苦手要素を設定し、端末に保存します。<br>
+    2. 配布されている作品コードを貼り付けるか、判定用URLを開いて判定します。<br>
+    3. まず「該当あり／なし」だけが表示されます。詳細の確認はネタバレを含む可能性があるため、同意した場合のみ開示されます。<br>
+    4. 判定画面の「報告用テキスト」ボタンで、GM・KPに送る用のテキストを出力できます。開封前でも「該当ありでした」とだけ報告でき、開封後は詳細と補足メモ付きで報告できます。</p>
+
+    <h3>状態の意味（遊ぶ人）</h3>
+    <p>未設定: まだ確認していない項目。判定では「未確認」として別枠で表示されます。<br>
+    気にしない: 判定対象になりません。<br>
+    要確認: 該当すると注意として表示されます。補足メモで「文章なら平気」などの条件を残せます。<br>
     絶対無理: 該当するとプレイ非推奨と表示されます。</p>
+
+    <h3>作者・GMの使い方</h3>
+    <p>1. 「作者・GM」タブで作品に含まれる要素を登録します。要素ごとに開示方法（公開／限定開示／秘匿）、形態、注意文、口外の可否を設定できます。<br>
+    2. 発行者区分を選びます。作者以外（KP・GM等）が作ったコードは、判定画面でその旨が明示されます。<br>
+    3. 発行された作品コードや判定用URLを、BOOTHの商品ページや卓の案内などに掲載してください。<br>
+    4. 編集用パスワードを設定すると、そのコードを「読み込んで編集」する際にパスワードが必要になります。</p>
+
+    <h3>パスワードについて（重要）</h3>
+    <p>パスワードは「編集画面を開く鍵」です。判定の仕組み上、コードの中身を完全に読めなくすること（暗号化）はできないため、技術的な解析に対する秘匿ではありません。また、パスワードを忘れた場合の再発行・解除はできません。忘れた場合は新しくコードを作り直してください。</p>
+
+    <h3>リストの更新とバージョンについて</h3>
+    <p>苦手要素リストは今後、項目が追加・変更されることがあります。その場合の挙動は次の通りです。<br>
+    ・古いリストで作られた作品コードは、そのまま使えます。判定画面に「リストv〇時点で作成。以降に追加された要素は未確認」と表示されます。<br>
+    ・あなたの設定にない新しい項目は「未設定（未確認）」として扱われます。リスト更新後は設定の見直しをおすすめします。<br>
+    ・このページより新しいリストで作られたコードに未対応の要素が含まれる場合は、その旨が警告されます。</p>
+
+    <h3>プライバシー</h3>
+    <p>このページにはサーバーやデータベースがありません。苦手要素の設定・作品の登録内容・判定結果は、すべてお使いの端末の中だけで処理されます。作品コードや判定用URLに含まれる情報は、作者が入力した内容のみです。</p>
+
     <h3>ご利用にあたって</h3>
-    <p>本ツールの判定は作者の自己申告に基づく参考情報であり、内容を保証するものではありません。要素の感じ方には個人差があります。最終的なプレイ可否のご判断はご自身でお願いします。<br>
+    <p>本ツールの判定は自己申告に基づく参考情報であり、内容を保証するものではありません。要素の感じ方には個人差があります。最終的なプレイ可否のご判断はご自身でお願いします。<br>
     「口外禁止」と表示された要素については、SNSや会話での言及をお控えください。<br>
     本ツールは現状のまま提供されるものであり、利用により生じたいかなる損害・トラブルについても、制作者は責任を負いません。</p>
   </div>
 </section>
 </main>
-<footer>苦手要素チェッカー / リストバージョン: <span id="listVer"></span>（<span id="listUpd"></span>更新）<br>判定は作者の自己申告に基づく参考情報です。利用により生じた損害・トラブルについて、制作者は責任を負いません。</footer>
+<footer>苦手要素チェッカー ツールv<span id="toolVer"></span> / リストv<span id="listVer"></span>（<span id="listUpd"></span>更新）<br>判定は登録者の自己申告に基づく参考情報です。利用により生じた損害・トラブルについて、制作者は責任を負いません。</footer>
 
 <script src="list.js"></script>
 <script>
 "use strict";
-/* ================= 共通 ================= */
-var LIST = window.NIGATE_LIST;
-var SEV_LABEL = {1:"示唆・軽度", 2:"明確にあり"};
-var TAG_LABEL = {1:"文章・口頭描写", 2:"画像・ビジュアル", 3:"NPCが行う", 4:"担当キャラクターが行う"};
+/* ================= 定数 ================= */
+const LIST = window.NIGATE_LIST;
+const TOOL_VERSION = "1.0";
+const SEV_LABEL = {1:"示唆・軽度", 2:"明確にあり"};
+const PSTATE_LABEL = {0:"気にしない", 1:"要確認", 2:"絶対無理"};
+const TAG_LABEL = {1:"文章・口頭描写", 2:"画像・ビジュアル", 3:"NPCが行う", 4:"担当キャラクターが行う"};
+const STORE_KEY = "ngt_player_v2";
+const SAMPLE_WORK = {
+  lv: 1,
+  t: "動作確認用サンプルシナリオ",
+  gc: "これは動作確認用のサンプルです。本作に恋愛要素はありません。",
+  ex: "サンプルの自由記入欄です。ここに書いた内容は開封後に必ず表示されます。",
+  by: { k: 1, n: "サンプル作者" },
+  it: {
+    "los01": { s: 2, d: "0" },
+    "pho14": { s: 1, d: "0" },
+    "men05": { s: 2, d: "B", sp: 0, w: "これはサンプルの注意文です。" },
+    "pvp02": { s: 1, d: "C" }
+  }
+};
 
+/* ================= 共通ヘルパー ================= */
 function $(id){ return document.getElementById(id); }
 function esc(s){
-  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
-    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
-  });
+  return String(s == null ? "" : s).replace(/[&<>"']/g, (c) =>
+    ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
 }
+function showMsg(id, text, kind){
+  const el = $(id);
+  el.textContent = text;
+  el.className = "msg " + kind;
+}
+function clearMsg(id){ $(id).className = "msg"; }
+document.addEventListener("click", (ev) => {
+  const btn = ev.target.closest ? ev.target.closest("[data-copy]") : null;
+  if (!btn) return;
+  const ta = $(btn.getAttribute("data-copy"));
+  ta.focus(); ta.select();
+  const done = () => { const t = btn.textContent; btn.textContent = "コピーしました"; setTimeout(() => { btn.textContent = t; }, 1500); };
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(ta.value).then(done, () => { document.execCommand("copy"); done(); });
+  } else { document.execCommand("copy"); done(); }
+});
+
+/* ================= コード符号化 ================= */
 function bytesToB64(bytes){
-  var bin = "";
-  for (var i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
 }
 function b64ToBytes(s){
   s = s.replace(/-/g,"+").replace(/_/g,"/");
   while (s.length % 4) s += "=";
-  var bin = atob(s), bytes = new Uint8Array(bin.length);
-  for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+  const bin = atob(s), bytes = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
   return bytes;
 }
 // 形式1: 素のJSONをbase64化 / 形式2: 圧縮してからbase64化（対応ブラウザで自動選択）
 async function packText(str){
-  var raw = new TextEncoder().encode(str);
+  const raw = new TextEncoder().encode(str);
   if (typeof CompressionStream === "undefined") return { v: 1, b64: bytesToB64(raw) };
-  var stream = new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate-raw"));
-  var buf = await new Response(stream).arrayBuffer();
+  const stream = new Blob([raw]).stream().pipeThrough(new CompressionStream("deflate-raw"));
+  const buf = await new Response(stream).arrayBuffer();
   return { v: 2, b64: bytesToB64(new Uint8Array(buf)) };
 }
 async function unpackText(v, b64){
-  var bytes = b64ToBytes(b64);
+  const bytes = b64ToBytes(b64);
   if (v === 1) return new TextDecoder().decode(bytes);
   if (typeof DecompressionStream === "undefined") return null;
-  var stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
-  var buf = await new Response(stream).arrayBuffer();
+  const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"));
+  const buf = await new Response(stream).arrayBuffer();
   return new TextDecoder().decode(buf);
 }
 async function encodeCode(kind, obj){ // kind: "W"(作品) / "P"(マイ設定)
-  var p = await packText(JSON.stringify(obj));
+  const p = await packText(JSON.stringify(obj));
   return "NGT" + kind + p.v + "." + p.b64;
 }
 async function decodeCode(kind, text){
-  var t = String(text || "").replace(/\s+/g, "");
-  var m = t.match(/^NGT([WP])([12])\./);
+  const t = String(text || "").replace(/\s+/g, "");
+  const m = t.match(/^NGT([WP])([12])\./);
   if (!m || m[1] !== kind) return { ok: false, reason: "format" };
   try {
-    var json = await unpackText(Number(m[2]), t.slice(m[0].length));
+    const json = await unpackText(Number(m[2]), t.slice(m[0].length));
     if (json === null) return { ok: false, reason: "unsupported" };
-    var obj = JSON.parse(json);
-    return { ok: true, obj: obj };
+    return { ok: true, obj: JSON.parse(json) };
   } catch(e){ return { ok: false, reason: "format" }; }
 }
 function decodeFailText(kind, reason){
@@ -288,177 +384,251 @@ function decodeFailText(kind, reason){
     ? "作品コードを読み取れませんでした。NGTWから始まる全文が貼られているか確認してください。"
     : "コードを読み取れませんでした。NGTPから始まる全文が貼られているか確認してください。";
 }
+
+/* ================= パスワード（編集用の鍵。暗号化ではない） ================= */
+function makeSalt(){
+  const arr = new Uint8Array(8);
+  if (window.crypto && crypto.getRandomValues) crypto.getRandomValues(arr);
+  else for (let i = 0; i < 8; i++) arr[i] = Math.floor(Math.random() * 256);
+  return bytesToB64(arr);
+}
+function fnvHash(str){
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++){
+    h ^= str.charCodeAt(i);
+    h = (h * 0x01000193) >>> 0;
+  }
+  return ("0000000" + h.toString(16)).slice(-8);
+}
+async function hashPassword(pw, salt){
+  const src = salt + "|" + pw;
+  if (window.crypto && crypto.subtle && crypto.subtle.digest){
+    try {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(src));
+      const bytes = new Uint8Array(buf);
+      let hex = "";
+      for (let i = 0; i < 16; i++) hex += ("0" + bytes[i].toString(16)).slice(-2);
+      return { a: "s", h: hex };
+    } catch(e){ /* fall through */ }
+  }
+  return { a: "f", h: fnvHash(src) + fnvHash(src.split("").reverse().join("")) };
+}
+async function verifyPassword(pw, pwRec){
+  if (!pwRec) return true;
+  if (pwRec.a === "s" && !(window.crypto && crypto.subtle)) return null; // 検証不能環境
+  const r = await hashPassword(pw, pwRec.salt);
+  // 保存時と同じ方式で照合するため、方式が違う場合は不一致扱い
+  return r.a === pwRec.a && r.h === pwRec.h;
+}
+
+/* ================= リスト参照 ================= */
 function itemById(id){
-  for (var c = 0; c < LIST.categories.length; c++){
-    var its = LIST.categories[c].items;
-    for (var i = 0; i < its.length; i++){
-      if (its[i].id === id) return { item: its[i], cat: LIST.categories[c] };
+  for (const cat of LIST.categories){
+    for (const it of cat.items){
+      if (it.id === id) return { item: it, cat: cat };
     }
   }
   return null;
 }
-function showMsg(id, text, kind){
-  var el = $(id);
-  el.textContent = text;
-  el.className = "msg " + kind;
+function activeItems(cat){
+  return cat.items.filter((it) => !it.retired);
 }
-function copyText(srcId, btn){
-  var ta = $(srcId);
-  ta.focus(); ta.select();
-  var done = function(){ var t = btn.textContent; btn.textContent = "コピーしました"; setTimeout(function(){ btn.textContent = t; }, 1500); };
-  if (navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(ta.value).then(done, function(){ document.execCommand("copy"); done(); });
-  } else { document.execCommand("copy"); done(); }
-}
+function hasOwn(obj, key){ return Object.prototype.hasOwnProperty.call(obj, key); }
 
 /* ================= タブ ================= */
-var tabs = document.querySelectorAll(".tab");
-for (var ti = 0; ti < tabs.length; ti++){
-  tabs[ti].addEventListener("click", function(){
-    for (var j = 0; j < tabs.length; j++) tabs[j].classList.remove("on");
-    this.classList.add("on");
-    var pages = document.querySelectorAll("section.page");
-    for (var k = 0; k < pages.length; k++) pages[k].classList.remove("on");
-    $("page-" + this.getAttribute("data-page")).classList.add("on");
-    window.scrollTo(0,0);
-  });
+const tabs = document.querySelectorAll(".tab");
+function switchTab(name){
+  tabs.forEach((t) => t.classList.toggle("on", t.getAttribute("data-page") === name));
+  document.querySelectorAll("section.page").forEach((p) => p.classList.toggle("on", p.id === "page-" + name));
+  window.scrollTo(0, 0);
 }
+tabs.forEach((t) => t.addEventListener("click", () => switchTab(t.getAttribute("data-page"))));
 
-/* ================= 遊ぶ人: 設定UI ================= */
-var playerState = { lv: LIST.version, m: {}, memo: "" };
-var STORE_KEY = "ngt_player_v1";
+/* ================= 遊ぶ人: 設定 =================
+   状態: m にキーなし=未設定 / 0=気にしない / 1=要確認 / 2=絶対無理
+   notes: 項目別の補足メモ（1・2のときのみ入力可） */
+let playerState = { lv: LIST.version, m: {}, notes: {}, memo: "" };
 
-function activeItems(cat){
-  var out = [];
-  for (var i = 0; i < cat.items.length; i++) if (!cat.items[i].retired) out.push(cat.items[i]);
-  return out;
-}
 function renderPlayerCats(){
-  var html = "";
-  for (var c = 0; c < LIST.categories.length; c++){
-    var cat = LIST.categories[c], its = activeItems(cat);
+  let html = "";
+  for (const cat of LIST.categories){
+    const its = activeItems(cat);
     if (!its.length) continue;
-    html += '<details class="cat" data-cat="' + esc(cat.id) + '"><summary>' + esc(cat.name)
+    html += '<details class="cat"><summary>' + esc(cat.name)
          + '<span class="catbadge" id="pbadge-' + esc(cat.id) + '"></span></summary><div class="catbody">'
-         + '<button type="button" class="allok" data-allok="' + esc(cat.id) + '">この分類はすべて「気にしない」にする</button>';
-    for (var i = 0; i < its.length; i++){
-      var it = its[i];
+         + '<button type="button" class="allbtn" data-pall="' + esc(cat.id) + '">この分類はまとめて「気にしない」にする</button>';
+    for (const it of its){
       html += '<div class="itemrow"><div class="itemlabel">' + esc(it.label) + '</div>'
            + '<div class="seg" data-pitem="' + esc(it.id) + '">'
+           + '<button type="button" data-v="u">未設定</button>'
            + '<button type="button" data-v="0">気にしない</button>'
-           + '<button type="button" data-v="1">注意でOK</button>'
+           + '<button type="button" data-v="1">要確認</button>'
            + '<button type="button" data-v="2">絶対無理</button>'
+           + '</div>'
+           + '<div class="itemnote hidden" id="pnote-' + esc(it.id) + '">'
+           + '<textarea data-pnote="' + esc(it.id) + '" placeholder="補足メモ（任意）例: 文章なら平気、画像は無理"></textarea>'
            + '</div></div>';
     }
     html += '</div></details>';
   }
   $("playerCats").innerHTML = html;
 }
+function playerValue(id){
+  return hasOwn(playerState.m, id) ? playerState.m[id] : "u";
+}
 function refreshPlayerUI(){
-  var segs = document.querySelectorAll("#playerCats .seg");
-  for (var s = 0; s < segs.length; s++){
-    var id = segs[s].getAttribute("data-pitem");
-    var v = playerState.m[id] || 0;
-    var btns = segs[s].querySelectorAll("button");
-    for (var b = 0; b < btns.length; b++){
-      btns[b].className = (Number(btns[b].getAttribute("data-v")) === v) ? ("sel" + v) : "";
+  document.querySelectorAll("#playerCats .seg").forEach((seg) => {
+    const id = seg.getAttribute("data-pitem");
+    const v = playerValue(id);
+    seg.querySelectorAll("button").forEach((btn) => {
+      const bv = btn.getAttribute("data-v");
+      const on = (bv === "u" && v === "u") || (bv !== "u" && Number(bv) === v);
+      btn.className = on ? (bv === "u" ? "selU" : "sel" + bv) : "";
+    });
+    const noteWrap = $("pnote-" + id);
+    noteWrap.classList.toggle("hidden", !(v === 1 || v === 2));
+    const ta = noteWrap.querySelector("textarea");
+    if (ta.value !== (playerState.notes[id] || "")) ta.value = playerState.notes[id] || "";
+  });
+  for (const cat of LIST.categories){
+    const its = activeItems(cat);
+    let setCount = 0, hitCount = 0;
+    for (const it of its){
+      if (hasOwn(playerState.m, it.id)){
+        setCount++;
+        if (playerState.m[it.id] > 0) hitCount++;
+      }
     }
-  }
-  for (var c = 0; c < LIST.categories.length; c++){
-    var cat = LIST.categories[c], its = activeItems(cat), n = 0;
-    for (var i = 0; i < its.length; i++) if (playerState.m[its[i].id] > 0) n++;
-    var badge = $("pbadge-" + cat.id);
+    const badge = $("pbadge-" + cat.id);
     if (badge){
-      badge.textContent = n ? (n + "件設定中") : "未設定";
-      badge.className = "catbadge" + (n ? " hit" : "");
+      if (setCount === 0){ badge.textContent = "未設定"; badge.className = "catbadge"; }
+      else if (setCount < its.length){ badge.textContent = "一部未設定 / 苦手" + hitCount + "件"; badge.className = "catbadge" + (hitCount ? " hit" : ""); }
+      else { badge.textContent = hitCount ? ("苦手" + hitCount + "件") : "すべて設定済"; badge.className = "catbadge" + (hitCount ? " hit" : ""); }
     }
   }
   $("pMemo").value = playerState.memo || "";
 }
-$("playerCats").addEventListener("click", function(ev){
-  var t = ev.target;
-  if (t.hasAttribute("data-allok")){
-    var cat = null;
-    for (var c = 0; c < LIST.categories.length; c++) if (LIST.categories[c].id === t.getAttribute("data-allok")) cat = LIST.categories[c];
-    if (cat){ var its = activeItems(cat); for (var i = 0; i < its.length; i++) delete playerState.m[its[i].id]; }
+$("playerCats").addEventListener("click", (ev) => {
+  const t = ev.target;
+  if (t.hasAttribute && t.hasAttribute("data-pall")){
+    const cat = LIST.categories.find((c) => c.id === t.getAttribute("data-pall"));
+    if (cat) for (const it of activeItems(cat)) playerState.m[it.id] = 0;
     refreshPlayerUI(); return;
   }
-  var seg = t.closest ? t.closest(".seg") : null;
+  const seg = t.closest ? t.closest(".seg[data-pitem]") : null;
   if (seg && t.tagName === "BUTTON"){
-    var id = seg.getAttribute("data-pitem"), v = Number(t.getAttribute("data-v"));
-    if (v === 0) delete playerState.m[id]; else playerState.m[id] = v;
+    const id = seg.getAttribute("data-pitem");
+    const bv = t.getAttribute("data-v");
+    if (bv === "u") delete playerState.m[id];
+    else playerState.m[id] = Number(bv);
     refreshPlayerUI();
   }
 });
-$("pSave").addEventListener("click", function(){
+$("playerCats").addEventListener("input", (ev) => {
+  const id = ev.target.getAttribute && ev.target.getAttribute("data-pnote");
+  if (!id) return;
+  const v = ev.target.value;
+  if (v) playerState.notes[id] = v; else delete playerState.notes[id];
+});
+$("pAllNone").addEventListener("click", () => {
+  for (const cat of LIST.categories){
+    for (const it of activeItems(cat)){
+      if (!hasOwn(playerState.m, it.id)) playerState.m[it.id] = 0;
+    }
+  }
+  refreshPlayerUI();
+});
+function unsetCount(){
+  let n = 0;
+  for (const cat of LIST.categories){
+    for (const it of activeItems(cat)) if (!hasOwn(playerState.m, it.id)) n++;
+  }
+  return n;
+}
+function collectPlayerInputs(){
   playerState.memo = $("pMemo").value;
   playerState.lv = LIST.version;
+}
+$("pSave").addEventListener("click", () => {
+  collectPlayerInputs();
+  const un = unsetCount();
+  const tail = un ? ("未設定の項目が" + un + "件あります。未設定のままでも保存できます（判定時は「未確認」として表示されます）。") : "";
   try {
     localStorage.setItem(STORE_KEY, JSON.stringify(playerState));
-    showMsg("pSaveMsg", "保存しました。次回このページを開いたときも設定が引き継がれます。", "ok");
+    showMsg("pSaveMsg", "保存しました。" + tail, "ok");
   } catch(e){
     showMsg("pSaveMsg", "この環境では端末への保存ができません。設定は今の画面内では有効です。マイ設定コードの書き出しをご利用ください。", "err");
   }
 });
-$("pExport").addEventListener("click", async function(){
-  playerState.memo = $("pMemo").value;
-  playerState.lv = LIST.version;
+$("pExport").addEventListener("click", async () => {
+  collectPlayerInputs();
   $("pExportCode").value = await encodeCode("P", playerState);
-  $("pExportBox").style.display = "block";
-  $("pImportBox").style.display = "none";
+  $("pExportBox").classList.remove("hidden");
+  $("pImportBox").classList.add("hidden");
 });
-$("pImportOpen").addEventListener("click", function(){
-  $("pImportBox").style.display = "block";
-  $("pExportBox").style.display = "none";
+$("pImportOpen").addEventListener("click", () => {
+  $("pImportBox").classList.remove("hidden");
+  $("pExportBox").classList.add("hidden");
 });
-$("pImportRun").addEventListener("click", async function(){
-  var r = await decodeCode("P", $("pImportCode").value);
+$("pImportRun").addEventListener("click", async () => {
+  const r = await decodeCode("P", $("pImportCode").value);
   if (!r.ok || typeof r.obj.m !== "object" || r.obj.m === null){
-    showMsg("pImportMsg", decodeFailText("P", r.ok ? "format" : r.reason), "err");
+    showMsg("pImportMsg", decodeFailText("P", r.reason), "err");
     return;
   }
-  var obj = r.obj;
-  playerState = { lv: Number(obj.lv) || 1, m: {}, memo: String(obj.memo || "") };
-  for (var k in obj.m){ var v = Number(obj.m[k]); if (v === 1 || v === 2) playerState.m[k] = v; }
+  const obj = r.obj;
+  playerState = { lv: Number(obj.lv) || 1, m: {}, notes: {}, memo: String(obj.memo || "") };
+  for (const k in obj.m){
+    const v = Number(obj.m[k]);
+    if (v === 0 || v === 1 || v === 2) playerState.m[k] = v;
+  }
+  if (obj.notes && typeof obj.notes === "object"){
+    for (const k in obj.notes){ if (obj.notes[k]) playerState.notes[k] = String(obj.notes[k]); }
+  }
   refreshPlayerUI();
   showMsg("pImportMsg", "読み込みました。「この端末に保存する」を押すと保存されます。", "ok");
 });
-$("pCopyExport").addEventListener("click", function(){ copyText("pExportCode", this); });
 (function loadSaved(){
   try {
-    var raw = localStorage.getItem(STORE_KEY);
+    const raw = localStorage.getItem(STORE_KEY);
     if (raw){
-      var obj = JSON.parse(raw);
-      if (obj && obj.m){ playerState = { lv: Number(obj.lv) || 1, m: obj.m, memo: String(obj.memo || "") }; }
+      const obj = JSON.parse(raw);
+      if (obj && obj.m){
+        playerState = { lv: Number(obj.lv) || 1, m: obj.m, notes: (obj.notes && typeof obj.notes === "object") ? obj.notes : {}, memo: String(obj.memo || "") };
+      }
     }
   } catch(e){}
 })();
 
 /* ================= 遊ぶ人: 判定 ================= */
-var currentJudge = null;
-$("judgeBtn").addEventListener("click", async function(){
-  $("judgeMsg").className = "msg";
-  var r = await decodeCode("W", $("workCode").value);
+let currentJudge = null;
+$("sampleBtn").addEventListener("click", async () => {
+  $("workCode").value = await encodeCode("W", SAMPLE_WORK);
+  clearMsg("judgeMsg");
+});
+$("judgeBtn").addEventListener("click", () => runJudge($("workCode").value));
+async function runJudge(codeText){
+  clearMsg("judgeMsg");
+  const r = await decodeCode("W", codeText);
   if (!r.ok || typeof r.obj.it !== "object" || r.obj.it === null){
     showMsg("judgeMsg", decodeFailText("W", r.reason), "err");
     $("judgeResult").innerHTML = "";
     return;
   }
-  playerState.memo = $("pMemo").value;
+  collectPlayerInputs();
   currentJudge = buildJudge(r.obj);
   renderJudgeStage1(currentJudge);
-});
-
+}
 function buildJudge(work){
-  var res = { work: work, publics: [], hard: [], soft: [], unset: [], unknown: [], hasSecretMatch: false, hasSettings: false };
-  for (var k in playerState.m){ if (playerState.m[k] > 0){ res.hasSettings = true; break; } }
-  var savedLv = Number(playerState.lv) || 1;
-  for (var id in work.it){
-    var w = work.it[id];
-    var s = Number(w.s);
-    if (s !== 1 && s !== 2) continue;
-    var found = itemById(id);
-    var entry = {
+  const res = { work: work, publics: [], hard: [], soft: [], unset: [], unknown: [],
+    secretHitCount: 0, hasSecretMatch: false, hasSettings: false, revealed: false };
+  for (const k in playerState.m){ res.hasSettings = true; break; }
+  for (const id in work.it){
+    const w = work.it[id];
+    const s = Number(w.s);
+    if (s !== 1 && s !== 2) continue; // s:0(なし宣言記録)・不正値は判定対象外
+    const found = itemById(id);
+    const entry = {
       id: id, sev: s,
       d: (w.d === "B" || w.d === "C") ? w.d : "0",
       tags: Array.isArray(w.tg) ? w.tg : [],
@@ -468,35 +638,45 @@ function buildJudge(work){
     };
     if (!found){ res.unknown.push(entry); continue; }
     if (entry.d === "0") res.publics.push(entry);
-    var ps;
-    if (Object.prototype.hasOwnProperty.call(playerState.m, id)) ps = playerState.m[id];
-    else if ((found.item.since || 1) > savedLv) ps = "unset";
-    else ps = 0;
-    if (ps === 2){ res.hard.push(entry); if (entry.d === "C") res.hasSecretMatch = true; }
-    else if (ps === 1){ res.soft.push(entry); if (entry.d === "C") res.hasSecretMatch = true; }
-    else if (ps === "unset"){ res.unset.push(entry); }
+    const ps = hasOwn(playerState.m, id) ? playerState.m[id] : "u";
+    if (ps === 2) res.hard.push(entry);
+    else if (ps === 1) res.soft.push(entry);
+    else if (ps === "u") res.unset.push(entry);
+    if ((ps === 1 || ps === 2) && entry.d === "C"){ res.hasSecretMatch = true; }
+    if ((ps === 1 || ps === 2 || ps === "u") && entry.d === "C") res.secretHitCount++;
   }
   return res;
 }
-
 function chipTags(entry){
-  var h = "";
-  for (var i = 0; i < entry.tags.length; i++){
-    var lb = TAG_LABEL[Number(entry.tags[i])];
+  let h = "";
+  for (const tg of entry.tags){
+    const lb = TAG_LABEL[Number(tg)];
     if (lb) h += '<span class="chip">' + esc(lb) + '</span>';
   }
   return h;
 }
+function issuerLabel(work){
+  const by = work.by || {};
+  const kind = Number(by.k) === 2 ? "第三者（KP・GM等）" : (Number(by.k) === 1 ? "作者本人" : "不明");
+  return kind + (by.n ? "：" + by.n : "");
+}
 function renderPublicBlock(res){
-  var w = res.work, h = "";
-  h += '<div class="pubbox">';
+  const w = res.work;
+  let h = '<div class="pubbox">';
   if (w.t) h += '<div style="font-weight:700;font-size:15px;">' + esc(w.t) + '</div>';
-  h += '<div class="note" style="font-size:12px;color:var(--sub);">作品コード読み込み結果（公開情報）</div>';
+  h += '<div class="byline">発行者: ' + esc(issuerLabel(w)) + '</div>';
+  if (w.by && w.by.u) h += '<div class="byline">参照URL: ' + esc(w.by.u) + '</div>';
+  if (w.by && Number(w.by.k) === 2){
+    h += '<div class="thirdparty">この作品コードは作者以外（KP・GM等）が作成したものです。作者公式の内容とは異なる場合があります。</div>';
+  }
+  const wlv = Number(w.lv) || 1;
+  if (wlv < LIST.version){
+    h += '<div class="byline">この作品コードはリストv' + wlv + '時点で作成されています。それ以降に追加された要素については未確認です。</div>';
+  }
   if (w.gc) h += '<div style="font-size:13.5px;margin-top:4px;white-space:pre-wrap;">' + esc(w.gc) + '</div>';
   if (res.publics.length){
     h += '<div style="margin-top:8px;font-size:13px;font-weight:700;">公開されている要素</div>';
-    for (var i = 0; i < res.publics.length; i++){
-      var e = res.publics[i];
+    for (const e of res.publics){
       h += '<div style="font-size:13.5px;margin:2px 0;">・' + esc(e.label)
         + ' <span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e) + '</div>';
     }
@@ -504,8 +684,20 @@ function renderPublicBlock(res){
   h += '</div>';
   return h;
 }
+function sealedCard(title, warnText, btnLabel){
+  return '<div class="sealed"><div class="seal">🔒</div>'
+    + '<div style="font-weight:700;">' + esc(title) + '</div>'
+    + '<p>' + esc(warnText) + '</p>'
+    + '<button class="btn" id="revealBtn">' + esc(btnLabel || "同意して開封する") + '</button></div>';
+}
+function reportBox(text, label){
+  return '<details class="fold"><summary>' + esc(label) + '</summary><div class="foldbody">'
+    + '<textarea class="report" id="reportText" readonly>' + esc(text) + '</textarea>'
+    + '<button class="btn small ghost" data-copy="reportText">報告テキストをコピー</button>'
+    + '</div></details>';
+}
 function renderJudgeStage1(res){
-  var h = renderPublicBlock(res);
+  let h = renderPublicBlock(res);
   if (res.unknown.length){
     h += '<div class="verdict warn">この作品コードには、このページがまだ対応していない要素が含まれています（' + res.unknown.length + '件）。ページが更新されるまで、その要素は判定できません。</div>';
   }
@@ -514,102 +706,158 @@ function renderJudgeStage1(res){
     $("judgeResult").innerHTML = h;
     return;
   }
-  var matched = res.hard.length + res.soft.length + res.unset.length > 0;
-  var hasExtra = !!(res.work.ex && String(res.work.ex).length);
+  const matched = res.hard.length + res.soft.length > 0;
+  const hasUnset = res.unset.length > 0;
+  const hasExtra = !!(res.work.ex && String(res.work.ex).length);
   if (!matched){
     h += '<div class="verdict safe"><b>あなたの設定に該当する要素はありませんでした。</b></div>';
-    if (hasExtra){
+    if (hasUnset){
+      h += '<div class="verdict mute">ただし、あなたが未設定（未確認）の要素がこの作品に含まれています。詳細は開封すると確認できます。</div>';
+      h += sealedCard("未確認の要素と追加の注意書きを確認できます。", "表示される内容には、作品のネタバレが含まれる可能性があります。");
+    } else if (hasExtra){
       h += sealedCard("作者からの追加の注意書きがあります。", "表示して確認できます。", "表示する");
     }
   } else {
     h += '<div class="verdict warn"><b>あなたの設定に該当する要素があります。</b><br>件数や内容は、ネタバレ防止のためここでは表示されません。</div>';
-    h += sealedCard("どの要素に該当するか確認しますか？", "表示される内容には、作品のネタバレが含まれる可能性があります。ネタバレを避けたい場合は開封せず、プレイを見送るか、作者・GMに直接ご相談ください。");
+    h += sealedCard("どの要素に該当するか確認しますか？", "表示される内容には、作品のネタバレが含まれる可能性があります。ネタバレを避けたい場合は開封せず、下の報告用テキストでGM・KPにご相談ください。");
   }
+  h += reportBox(makeReport(res, false), "GM・KP向け報告用テキスト（開封前・詳細を含みません）");
   $("judgeResult").innerHTML = h;
-  var btn = $("revealBtn");
-  if (btn) btn.addEventListener("click", function(){ renderJudgeStage2(currentJudge); });
-}
-function sealedCard(title, warnText, btnLabel){
-  return '<div class="sealed"><div class="seal">🔒</div>'
-    + '<div style="font-weight:700;">' + esc(title) + '</div>'
-    + '<p>' + esc(warnText) + '</p>'
-    + '<button class="btn" id="revealBtn">' + esc(btnLabel || "同意して開封する") + '</button></div>';
+  const btn = $("revealBtn");
+  if (btn) btn.addEventListener("click", () => renderJudgeStage2(currentJudge));
 }
 function renderHitItem(e){
   if (e.d === "C"){
     return '<div class="hititem secretitem"><span class="nm">開示できない要素</span>'
       + '<div style="font-size:12.5px;">作者の設定により、この要素の内容は秘匿されています。</div></div>';
   }
-  var h = '<div class="hititem"><span class="nm">' + esc(e.label) + '</span> '
+  let h = '<div class="hititem"><span class="nm">' + esc(e.label) + '</span> '
     + '<span class="chip sev' + e.sev + '">' + SEV_LABEL[e.sev] + '</span>' + chipTags(e);
-  if (e.warn) h += '<div class="authorwarn">作者からの注意: ' + esc(e.warn) + '</div>';
+  if (e.warn) h += '<div class="authorwarn">登録者からの注意: ' + esc(e.warn) + '</div>';
+  const pn = playerState.notes[e.id];
+  if (pn) h += '<div class="plnote">あなたの補足メモ: ' + esc(pn) + '</div>';
   if (e.d === "B"){
     h += e.mentionOk
-      ? '<div class="mention yes">この要素について: 感想等での言及は作者が許可しています。</div>'
+      ? '<div class="mention yes">この要素について: 感想等での言及は許可されています。</div>'
       : '<div class="mention no">この要素について: SNSや会話での言及は禁止されています。</div>';
   }
   h += '</div>';
   return h;
 }
 function renderJudgeStage2(res){
-  var h = renderPublicBlock(res);
-  var verdict, cls;
+  res.revealed = true;
+  let h = renderPublicBlock(res);
+  let cls, verdict;
   if (res.hard.length || res.hasSecretMatch){
     cls = "danger";
     verdict = res.hasSecretMatch
       ? "開示できない要素に該当するため、この作品のプレイは非推奨です。"
       : "「絶対無理」に設定した要素に該当するため、この作品のプレイは非推奨です。";
-  } else if (res.soft.length || res.unset.length){
-    cls = "warn"; verdict = "注意が必要な要素に該当しています。以下を確認のうえ、プレイの可否をご判断ください。";
+  } else if (res.soft.length){
+    cls = "warn"; verdict = "要確認の要素に該当しています。以下を確認のうえ、プレイの可否をご判断ください。";
+  } else if (res.unset.length){
+    cls = "mute"; verdict = "設定済みの要素への該当はありませんが、未確認（未設定）の要素が含まれています。";
   } else {
     cls = "safe"; verdict = "あなたの設定に該当する要素はありませんでした。";
   }
   h += '<div class="verdict ' + cls + '"><b>' + esc(verdict) + '</b></div>';
   if (res.hard.length){
     h += '<div class="hitgroup danger"><h4>「絶対無理」に該当</h4>';
-    for (var i = 0; i < res.hard.length; i++) h += renderHitItem(res.hard[i]);
+    for (const e of res.hard) h += renderHitItem(e);
     h += '</div>';
   }
   if (res.soft.length){
-    h += '<div class="hitgroup warn"><h4>「注意でOK」に該当</h4>';
-    for (var j = 0; j < res.soft.length; j++) h += renderHitItem(res.soft[j]);
+    h += '<div class="hitgroup warn"><h4>「要確認」に該当</h4>';
+    for (const e of res.soft) h += renderHitItem(e);
     h += '</div>';
   }
   if (res.unset.length){
-    h += '<div class="hitgroup unset"><h4>あなたが未設定の要素に該当（設定の更新をおすすめします）</h4>';
-    for (var k = 0; k < res.unset.length; k++) h += renderHitItem(res.unset[k]);
+    h += '<div class="hitgroup unset"><h4>未設定のため未確認の要素（設定の見直しをおすすめします）</h4>';
+    for (const e of res.unset) h += renderHitItem(e);
     h += '</div>';
   }
   if (res.work.ex){
-    h += '<div class="hitgroup"><h4>その他の注意要素（作者記入）</h4>'
+    h += '<div class="hitgroup"><h4>その他の注意要素（登録者記入）</h4>'
       + '<div class="hititem" style="white-space:pre-wrap;">' + esc(res.work.ex) + '</div></div>';
   }
   if (playerState.memo){
-    h += '<div class="hitgroup"><h4>自分用メモ（あなたの入力）</h4>'
+    h += '<div class="hitgroup"><h4>自由記入（あなたの入力）</h4>'
       + '<div class="hititem" style="white-space:pre-wrap;">' + esc(playerState.memo) + '</div></div>';
   }
+  h += reportBox(makeReport(res, true), "GM・KP向け報告用テキスト（開封後・詳細つき）");
   h += '<p class="note">「口外禁止」の要素は、SNSや会話での言及をお控えください。この画面のスクリーンショットの公開も、内容によってはネタバレにあたります。</p>';
   $("judgeResult").innerHTML = h;
 }
 
-/* ================= 作者 ================= */
+/* ================= 報告用テキスト ================= */
+function reportItemLine(e){
+  if (e.d === "C") return null; // 秘匿は件数のみ
+  let line = "・" + e.label + "（" + SEV_LABEL[e.sev] + "）";
+  const tgs = e.tags.map((t) => TAG_LABEL[Number(t)]).filter(Boolean);
+  if (tgs.length) line += "［形態: " + tgs.join("・") + "］";
+  const parts = [line];
+  if (playerState.notes[e.id]) parts.push("　補足メモ: " + playerState.notes[e.id]);
+  if (e.warn) parts.push("　登録者注意文: " + e.warn);
+  return parts.join("\n");
+}
+function makeReport(res, revealed){
+  const L = [];
+  L.push(revealed ? "【苦手要素チェック 報告（開封済み）】" : "【苦手要素チェック 報告（未開封）】");
+  L.push("作品: " + (res.work.t || "（タイトル未設定）"));
+  L.push("コード発行者: " + issuerLabel(res.work));
+  if (!revealed){
+    const matched = res.hard.length + res.soft.length > 0;
+    L.push("判定: " + (matched ? "該当あり（詳細は未開封です。判断をお願いします）" : "設定済みの要素への該当なし"));
+    L.push("未確認（未設定）の要素: " + (res.unset.length ? "あり" : "なし"));
+  } else {
+    let verdict;
+    if (res.hard.length || res.hasSecretMatch) verdict = "プレイ非推奨";
+    else if (res.soft.length) verdict = "要確認";
+    else verdict = "設定済みの要素への該当なし";
+    L.push("総合判定: " + verdict);
+    const groups = [
+      ["■「絶対無理」に該当", res.hard],
+      ["■「要確認」に該当", res.soft],
+      ["■未確認（未設定）の要素", res.unset]
+    ];
+    for (const [title, arr] of groups){
+      const lines = arr.map(reportItemLine).filter(Boolean);
+      const secret = arr.filter((e) => e.d === "C").length;
+      if (lines.length || secret){
+        L.push(title);
+        for (const ln of lines) L.push(ln);
+        if (secret) L.push("・（秘匿設定の要素 " + secret + "件を含みます）");
+      }
+    }
+    if (res.secretHitCount) L.push("■秘匿設定の要素に該当: " + res.secretHitCount + "件（内容は表示されません）");
+    if (res.work.ex) L.push("■その他の注意要素（登録者記入）:\n" + res.work.ex);
+  }
+  if (playerState.memo) L.push("■自由記入（プレイヤー）:\n" + playerState.memo);
+  L.push("リストv" + (Number(res.work.lv) || 1) + " / ツールv" + TOOL_VERSION);
+  L.push("※本報告はGM・KP確認用です。SNS等への転載はお控えください。");
+  return L.join("\n");
+}
+
+/* ================= 作者・GM =================
+   状態: 未設定(u・既定) / 0=なし / 1=示唆・軽度 / 2=明確にあり */
 function renderAuthorCats(){
-  var html = "";
-  for (var c = 0; c < LIST.categories.length; c++){
-    var cat = LIST.categories[c], its = activeItems(cat);
+  let html = "";
+  for (const cat of LIST.categories){
+    const its = activeItems(cat);
     if (!its.length) continue;
     html += '<details class="cat"><summary>' + esc(cat.name)
-         + '<span class="catbadge" id="abadge-' + esc(cat.id) + '"></span></summary><div class="catbody">';
-    for (var i = 0; i < its.length; i++){
-      var it = its[i];
-      html += '<div class="itemrow" data-aitem="' + esc(it.id) + '" data-tags="' + (cat.tags ? "1" : "0") + '">'
+         + '<span class="catbadge" id="abadge-' + esc(cat.id) + '"></span></summary><div class="catbody">'
+         + '<button type="button" class="allbtn" data-aall="' + esc(cat.id) + '">この分類はまとめて「なし」にする</button>';
+    for (const it of its){
+      html += '<div class="itemrow" data-aitem="' + esc(it.id) + '">'
         + '<div class="itemlabel">' + esc(it.label) + '</div>'
         + '<div class="seg" data-aseg="' + esc(it.id) + '">'
+        + '<button type="button" data-v="u">未設定</button>'
         + '<button type="button" data-v="0">なし</button>'
         + '<button type="button" data-v="1">示唆・軽度</button>'
         + '<button type="button" data-v="2">明確にあり</button>'
         + '</div>'
-        + '<div class="subopts" id="sub-' + esc(it.id) + '" style="display:none;">'
+        + '<div class="subopts hidden" id="sub-' + esc(it.id) + '">'
         + '<span class="sublabel">開示方法</span>'
         + '<select data-role="d">'
         + '<option value="0">公開（判定前から見える）</option>'
@@ -636,121 +884,176 @@ function renderAuthorCats(){
   }
   $("authorCats").innerHTML = html;
 }
+const authorSevMap = {}; // id -> "u"|0|1|2
 function authorSev(id){
-  var seg = document.querySelector('[data-aseg="' + id + '"]');
-  if (!seg) return 0;
-  var sel = seg.querySelector("button[class^=sel]");
-  return sel ? Number(sel.getAttribute("data-v")) : 0;
+  return hasOwn(authorSevMap, id) ? authorSevMap[id] : "u";
 }
 function setAuthorSev(id, v){
-  var seg = document.querySelector('[data-aseg="' + id + '"]');
+  if (v === "u") delete authorSevMap[id]; else authorSevMap[id] = v;
+  const seg = document.querySelector('[data-aseg="' + id + '"]');
   if (!seg) return;
-  var btns = seg.querySelectorAll("button");
-  for (var b = 0; b < btns.length; b++){
-    btns[b].className = (Number(btns[b].getAttribute("data-v")) === v && v > 0) ? ("sel" + v) : (Number(btns[b].getAttribute("data-v")) === v ? "sel0" : "");
-  }
-  var sub = $("sub-" + id);
-  if (sub) sub.style.display = v > 0 ? "block" : "none";
+  seg.querySelectorAll("button").forEach((btn) => {
+    const bv = btn.getAttribute("data-v");
+    const on = (bv === "u" && v === "u") || (bv !== "u" && Number(bv) === v);
+    btn.className = on ? (bv === "u" ? "selU" : "sel" + bv) : "";
+  });
+  $("sub-" + id).classList.toggle("hidden", !(v === 1 || v === 2));
 }
 function refreshAuthorBadges(){
-  for (var c = 0; c < LIST.categories.length; c++){
-    var cat = LIST.categories[c], its = activeItems(cat), n = 0;
-    for (var i = 0; i < its.length; i++) if (authorSev(its[i].id) > 0) n++;
-    var badge = $("abadge-" + cat.id);
+  for (const cat of LIST.categories){
+    const its = activeItems(cat);
+    let hit = 0, touched = 0;
+    for (const it of its){
+      const v = authorSev(it.id);
+      if (v !== "u") touched++;
+      if (v === 1 || v === 2) hit++;
+    }
+    const badge = $("abadge-" + cat.id);
     if (badge){
-      badge.textContent = n ? (n + "件該当") : "該当なし";
-      badge.className = "catbadge" + (n ? " hit" : "");
+      if (hit){ badge.textContent = hit + "件該当"; badge.className = "catbadge hit"; }
+      else if (touched === its.length){ badge.textContent = "すべてなし"; badge.className = "catbadge"; }
+      else if (touched){ badge.textContent = "一部未設定"; badge.className = "catbadge"; }
+      else { badge.textContent = "未設定"; badge.className = "catbadge"; }
     }
   }
 }
 function refreshSubopt(id){
-  var sub = $("sub-" + id);
+  const sub = $("sub-" + id);
   if (!sub) return;
-  var d = sub.querySelector('[data-role="d"]').value;
-  var bopts = sub.querySelector('[data-role="bopts"]');
-  bopts.style.display = (d === "B") ? "block" : "none";
+  const d = sub.querySelector('[data-role="d"]').value;
+  sub.querySelector('[data-role="bopts"]').classList.toggle("hidden", d !== "B");
 }
-$("authorCats").addEventListener("click", function(ev){
-  var t = ev.target;
-  var seg = t.closest ? t.closest("[data-aseg]") : null;
+$("authorCats").addEventListener("click", (ev) => {
+  const t = ev.target;
+  if (t.hasAttribute && t.hasAttribute("data-aall")){
+    const cat = LIST.categories.find((c) => c.id === t.getAttribute("data-aall"));
+    if (cat) for (const it of activeItems(cat)) setAuthorSev(it.id, 0);
+    refreshAuthorBadges(); return;
+  }
+  const seg = t.closest ? t.closest("[data-aseg]") : null;
   if (seg && t.tagName === "BUTTON"){
-    setAuthorSev(seg.getAttribute("data-aseg"), Number(t.getAttribute("data-v")));
+    const bv = t.getAttribute("data-v");
+    setAuthorSev(seg.getAttribute("data-aseg"), bv === "u" ? "u" : Number(bv));
     refreshAuthorBadges();
   }
 });
-$("authorCats").addEventListener("change", function(ev){
-  var row = ev.target.closest ? ev.target.closest("[data-aitem]") : null;
+$("authorCats").addEventListener("change", (ev) => {
+  const row = ev.target.closest ? ev.target.closest("[data-aitem]") : null;
   if (row && ev.target.getAttribute("data-role") === "d") refreshSubopt(row.getAttribute("data-aitem"));
 });
-$("aGenerate").addEventListener("click", async function(){
-  var work = { lv: LIST.version, it: {} };
-  var _t = $("aTitle").value.trim(); if (_t) work.t = _t;
-  var _gc = $("aComment").value.trim(); if (_gc) work.gc = _gc;
-  var _ex = $("aExtra").value.trim(); if (_ex) work.ex = _ex;
-  var rows = document.querySelectorAll("[data-aitem]");
-  for (var r = 0; r < rows.length; r++){
-    var id = rows[r].getAttribute("data-aitem");
-    var s = authorSev(id);
-    if (s < 1) continue;
-    var sub = $("sub-" + id);
-    var d = sub.querySelector('[data-role="d"]').value;
-    var entry = { s: s, d: d };
-    var tgs = sub.querySelectorAll('[data-role="tg"]:checked');
-    if (tgs.length){
-      entry.tg = [];
-      for (var g = 0; g < tgs.length; g++) entry.tg.push(Number(tgs[g].value));
-    }
+function issuerValue(){
+  const el = document.querySelector('input[name="aBy"]:checked');
+  return el ? Number(el.value) : 0;
+}
+$("aGenerate").addEventListener("click", async () => {
+  const byK = issuerValue();
+  if (!byK){
+    showMsg("aGenMsg", "発行者区分（作者本人／第三者）を選択してください。", "err");
+    return;
+  }
+  const work = { lv: LIST.version, it: {} };
+  const t = $("aTitle").value.trim(); if (t) work.t = t;
+  const gc = $("aComment").value.trim(); if (gc) work.gc = gc;
+  const ex = $("aExtra").value.trim(); if (ex) work.ex = ex;
+  work.by = { k: byK };
+  const byN = $("aByName").value.trim(); if (byN) work.by.n = byN;
+  const byU = $("aByUrl").value.trim(); if (byU) work.by.u = byU;
+  document.querySelectorAll("[data-aitem]").forEach((row) => {
+    const id = row.getAttribute("data-aitem");
+    const s = authorSev(id);
+    if (s === "u") return;
+    if (s === 0){ work.it[id] = { s: 0 }; return; }
+    const sub = $("sub-" + id);
+    const d = sub.querySelector('[data-role="d"]').value;
+    const entry = { s: s, d: d };
+    const tgs = sub.querySelectorAll('[data-role="tg"]:checked');
+    if (tgs.length) entry.tg = Array.from(tgs).map((el) => Number(el.value));
     if (d === "B"){
-      var sp = sub.querySelector('[data-role="sp"]:checked');
+      const sp = sub.querySelector('[data-role="sp"]:checked');
       entry.sp = sp ? Number(sp.value) : 0;
-      var w = sub.querySelector('[data-role="w"]').value.trim();
-      if (w) entry.w = w;
+      const wv = sub.querySelector('[data-role="w"]').value.trim();
+      if (wv) entry.w = wv;
     }
     work.it[id] = entry;
+  });
+  const pwRaw = $("aPw").value;
+  if (pwRaw){
+    const salt = makeSalt();
+    const rec = await hashPassword(pwRaw, salt);
+    work.pw = { a: rec.a, salt: salt, h: rec.h };
   }
-  var code = await encodeCode("W", work);
+  const code = await encodeCode("W", work);
   $("aOutCode").value = code;
-  var url = (location.protocol === "file:") ? "（公開後のページURLをここに入れてください）" : location.origin + location.pathname;
-  $("aOutTpl").value = "【苦手要素チェック】\n本作の苦手要素を、ネタバレなしで事前に確認できます。\nチェックページ: " + url + "\n\n作品コード（ページに貼り付けてください）:\n" + code;
-  $("aOutBox").style.display = "block";
-  var n = Object.keys(work.it).length;
-  showMsg("aGenMsg", "作品コードを生成しました（登録要素: " + n + "件）。生成後に内容を変更した場合は、もう一度生成してください。", "ok");
+  const isFile = location.protocol === "file:";
+  const pageUrl = isFile ? "" : location.origin + location.pathname;
+  if (isFile){
+    $("aUrlWrap").classList.add("hidden");
+  } else {
+    $("aUrlWrap").classList.remove("hidden");
+    $("aOutUrl").value = pageUrl + "#c=" + code;
+  }
+  const urlText = isFile ? "（公開後のページURLをここに入れてください）" : pageUrl;
+  $("aOutTpl").value = "【苦手要素チェック】\n本作の苦手要素を、ネタバレなしで事前に確認できます。\nチェックページ: " + urlText
+    + (isFile ? "" : "\n判定用URL（開くと自動で判定されます）:\n" + pageUrl + "#c=" + code)
+    + "\n\n作品コード（ページに貼り付ける場合はこちら）:\n" + code;
+  $("aOutBox").classList.remove("hidden");
+  let n = 0;
+  for (const k in work.it) if (work.it[k].s === 1 || work.it[k].s === 2) n++;
+  showMsg("aGenMsg", "作品コードを生成しました（該当要素: " + n + "件"
+    + (work.pw ? "・パスワード付き" : "") + "）。生成後に内容を変更した場合は、もう一度生成してください。", "ok");
 });
-$("aCopyCode").addEventListener("click", function(){ copyText("aOutCode", this); });
-$("aCopyTpl").addEventListener("click", function(){ copyText("aOutTpl", this); });
-$("aLoadRun").addEventListener("click", async function(){
-  var r = await decodeCode("W", $("aLoadCode").value);
+$("aLoadRun").addEventListener("click", async () => {
+  const r = await decodeCode("W", $("aLoadCode").value);
   if (!r.ok || typeof r.obj.it !== "object" || r.obj.it === null){
     showMsg("aLoadMsg", decodeFailText("W", r.reason), "err");
     return;
   }
-  var work = r.obj;
+  const work = r.obj;
+  if (work.pw){
+    const v = await verifyPassword($("aLoadPw").value, work.pw);
+    if (v === null){
+      showMsg("aLoadMsg", "この環境ではパスワードの照合ができません（安全な接続が必要です）。公開後のページ（https）でお試しください。", "err");
+      return;
+    }
+    if (!v){
+      showMsg("aLoadMsg", "パスワードが一致しません。このコードには編集用パスワードが設定されています。", "err");
+      return;
+    }
+  }
   $("aTitle").value = String(work.t || "");
   $("aComment").value = String(work.gc || "");
   $("aExtra").value = String(work.ex || "");
-  var rows = document.querySelectorAll("[data-aitem]");
-  var missing = 0;
-  for (var r = 0; r < rows.length; r++) setAuthorSev(rows[r].getAttribute("data-aitem"), 0);
-  for (var id in work.it){
-    var w = work.it[id], s = Number(w.s);
-    if (s !== 1 && s !== 2) continue;
-    var sub = $("sub-" + id);
-    if (!sub){ missing++; continue; }
+  const byK = work.by ? Number(work.by.k) : 0;
+  document.querySelectorAll('input[name="aBy"]').forEach((el) => { el.checked = Number(el.value) === byK; });
+  $("aByName").value = work.by && work.by.n ? String(work.by.n) : "";
+  $("aByUrl").value = work.by && work.by.u ? String(work.by.u) : "";
+  $("aPw").value = "";
+  document.querySelectorAll("[data-aitem]").forEach((row) => setAuthorSev(row.getAttribute("data-aitem"), "u"));
+  let missing = 0;
+  for (const id in work.it){
+    const w = work.it[id];
+    const s = Number(w.s);
+    if (s !== 0 && s !== 1 && s !== 2) continue;
+    const row = document.querySelector('[data-aitem="' + id + '"]');
+    if (!row){ missing++; continue; }
     setAuthorSev(id, s);
+    if (s === 0) continue;
+    const sub = $("sub-" + id);
     sub.querySelector('[data-role="d"]').value = (w.d === "0" || w.d === "C") ? w.d : "B";
-    var tgs = sub.querySelectorAll('[data-role="tg"]');
-    for (var g = 0; g < tgs.length; g++) tgs[g].checked = Array.isArray(w.tg) && w.tg.indexOf(Number(tgs[g].value)) >= 0;
-    var spv = (Number(w.sp) === 1) ? "1" : "0";
-    var sps = sub.querySelectorAll('[data-role="sp"]');
-    for (var p = 0; p < sps.length; p++) sps[p].checked = (sps[p].value === spv);
-    var wtxt = sub.querySelector('[data-role="w"]');
+    sub.querySelectorAll('[data-role="tg"]').forEach((el) => {
+      el.checked = Array.isArray(w.tg) && w.tg.indexOf(Number(el.value)) >= 0;
+    });
+    const spv = (Number(w.sp) === 1) ? "1" : "0";
+    sub.querySelectorAll('[data-role="sp"]').forEach((el) => { el.checked = (el.value === spv); });
+    const wtxt = sub.querySelector('[data-role="w"]');
     if (wtxt) wtxt.value = String(w.w || "");
     refreshSubopt(id);
   }
   refreshAuthorBadges();
-  showMsg("aLoadMsg", missing
+  const pwNote = work.pw ? "パスワードを引き継ぐ場合は、発行時にもう一度パスワード欄へ入力してください。" : "";
+  showMsg("aLoadMsg", (missing
     ? "読み込みました。ただし現在のリストに存在しない要素が" + missing + "件あり、反映できませんでした。"
-    : "読み込みました。内容を修正して、もう一度コードを生成してください。", missing ? "err" : "ok");
+    : "読み込みました。内容を修正して、もう一度コードを生成してください。") + pwNote, missing ? "err" : "ok");
 });
 
 /* ================= 初期化 ================= */
@@ -758,8 +1061,17 @@ renderPlayerCats();
 refreshPlayerUI();
 renderAuthorCats();
 refreshAuthorBadges();
-$("listVer").textContent = "v" + LIST.version;
+$("toolVer").textContent = TOOL_VERSION;
+$("listVer").textContent = LIST.version;
 $("listUpd").textContent = LIST.updated;
+(function autoFromUrl(){
+  const m = location.hash.match(/^#c=(.+)$/);
+  if (!m) return;
+  const code = decodeURIComponent(m[1]);
+  $("workCode").value = code;
+  switchTab("player");
+  runJudge(code);
+})();
 </script>
 </body>
 </html>
